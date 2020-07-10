@@ -3,7 +3,8 @@ import {
   Map, 
   TileLayer, 
   CircleMarker, 
-  Popup 
+  Popup,
+  GeoJSON
 } from "react-leaflet";
 import {
   attribution,
@@ -12,11 +13,49 @@ import {
 } from './utils/Utils';
 import DemoMapTooltip from "./DemoMapTooltip";
 import "leaflet/dist/leaflet.css";
+import US_counties from './data/US_counties_5m'
+
+console.log(US_counties)
+
+function style(feature) {
+    return {
+        fillColor: getColor(feature.properties.COUNTY),
+        weight: 0.5,
+        opacity: 1,
+        color: 'white',
+        dashArray: '3',
+        fillOpacity: 0.7
+    };
+}
+
+function getColor(d) {
+    return d > 1000 ? '#800026' :
+           d > 500  ? '#BD0026' :
+           d > 200  ? '#E31A1C' :
+           d > 100  ? '#FC4E2A' :
+           d > 50   ? '#FD8D3C' :
+           d > 20   ? '#FEB24C' :
+           d > 10   ? '#FED976' :
+                      '#FFEDA0';
+}
 
 export default class DemoMap extends Component {
     state = defaultMapState;
-    render() {
-        return this.props.mountains ? (
+    componentDidMount() {
+              this.setState({
+                isLoaded: true,
+                items: US_counties
+              });
+            }
+            // Note: it's important to handle errors here
+            // instead of a catch() block so that we don't swallow
+            // exceptions from actual bugs in components.
+        render() {
+        const { isLoaded, items } = this.state;
+         if (!isLoaded) {
+          return <div>Loading...</div>;
+        } else {
+            return this.props.mountains ? (
         <Map
             center={[this.state.lat, this.state.lng]}
             zoom={this.state.zoom}
@@ -30,6 +69,16 @@ export default class DemoMap extends Component {
                 attribution={attribution}
                 url={tileUrl}
             />
+          <GeoJSON
+          data={items} 
+          style={style}
+        //  style={() => ({
+        //    color: '#4a83ec',
+        //    weight: 0.5,
+        //    fillColor: getColor(items.features.properties.COUNTY),
+        //    fillOpacity: 0.5,
+        //  })}
+          />
             {this.props.mountains.map((mountain, idx) => 
                 <CircleMarker 
                     key={`mountain-${mountain.id}`}
@@ -57,4 +106,5 @@ export default class DemoMap extends Component {
             "Data is loading..."
         );
     }
+}
 }

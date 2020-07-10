@@ -1,9 +1,17 @@
 export const attribution = 
-  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+ '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
 
 export const tileUrl = 
-  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+  'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png'
 
+export const choroStyle = {
+  fillColor: '#F28F3B',
+  weight: 2,
+  opacity: 1,
+  color: 'white',
+  dashArray: '3',
+  fillOpacity: 0.5
+}
 export const defaultMapState = {
   lat: 44.148358, 
   lng: -121.784154,
