@@ -13,10 +13,11 @@ export const choroStyle = {
   fillOpacity: 0.5
 }
 export const defaultMapState = {
-  lat: 44.148358, 
-  lng: -121.784154,
+  lat: 40.697149,
+  lng: -74.2598761,
   zoom: 8,
   minZoom: 2,
+  sidebarOpen: false,
 }
 
 export const mountains = [{
