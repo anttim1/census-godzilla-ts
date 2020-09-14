@@ -3,7 +3,9 @@ body {
 }
 
 .title {
-  text-align: left;
+  width: 50vw;
+  margin: 0 auto;
+  text-align: center;
   line-height: 18px;
   color: #555;
   position: relative;
@@ -21,7 +23,6 @@ body {
 .info {
   padding: 6px 8px;
   font: 14px/16px Arial, Helvetica, sans-serif;
-  background: white;
   background: rgba(255, 255, 255, 0.8);
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
   border-radius: 5px;
@@ -45,3 +46,12 @@ body {
   margin-right: 8px;
   opacity: 0.7;
 }
+
+/* bootstrap*/
+.form-group {
+    position: relative;
+    z-index:9999;
+    width: 20vw;
+    margin: 10px
+}
+
