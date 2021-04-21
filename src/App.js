@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import DemoMap from "./components/DemoMap";
 import "leaflet/dist/leaflet.css";
 //import Sidebar from "react-sidebar";
@@ -17,14 +17,12 @@ const tablesCall =
 const columnsCall =
   "https://better-census-api.com/gettable?vintage=2018&dataset=acs5&state=10&county=*&group=$group&variable=*&geography=tract&key=$key";
 
-class App extends Component {
-  state = {
-    //    sidebarOpen: true,
-    tables: [],
-    columns: [],
-    selectedCol: null,
-  };
-
+const App = () => {
+  const [tables, setTables] = useState([]);
+  const [columns, setColumns] = useState([]);
+  const [selectedCol, setSelectedCol] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [datasets, setDatasets] = useState([]);
   //  constructor(props) {
   //super(props);
   //this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
@@ -34,18 +32,18 @@ class App extends Component {
   //this.setState({ sidebarOpen: open });
   //  }
 
-  getTables = (e) => {
+  const getTables = (e) => {
     fetch(tablesCall.replace("$id", e.target.value))
       .then((res) => res.json())
       .then((result) => {
-        this.setState({ tables: result.Groups });
+        setTables(result.Groups);
       })
       .catch((error) => {
         console.log(error);
       });
   };
 
-  getColumns = (e) => {
+  const getColumns = (e) => {
     if (e[0] !== undefined) {
       fetch(
         columnsCall
@@ -54,85 +52,82 @@ class App extends Component {
       )
         .then((res) => res.json())
         .then((result) => {
-          this.setState({ columns: result.variableInfo });
+          setColumns(result.variableInfo);
         })
         .catch((error) => {
           console.log(error);
         });
+    } else {
+      console.log("can't get columns");
     }
   };
 
-  setColumn = (e) => {
-    this.setState({ selectedCol: e[0] });
+  const setColumn = (e) => {
+    console.log("setting columns");
+    setSelectedCol(e[0]);
   };
 
-  componentDidMount() {
+  useEffect(() => {
     fetch(acsCall)
       .then((res) => res.json())
       .then((data) => {
         let datasetsAPI = data.map((d) => {
           return { id: d.Dataset_ID, vintage: d.Vintage, title: d.Title };
         });
-        this.setState({
-          isLoaded: true,
-          datasets: [{ vintage: "", title: "(Select dataset)" }].concat(
-            datasetsAPI
-          ),
-        });
+        setIsLoaded(true);
+        setDatasets(
+          [{ vintage: "", title: "(Select dataset)" }].concat(datasetsAPI)
+        );
       })
       .catch((error) => {
         console.log(error);
       });
-  }
+  }, []);
 
-  render() {
-    const { isLoaded, datasets } = this.state;
-    if (!isLoaded) {
-      return <div>Loading...</div>;
-    } else {
-      return (
-        <>
-          <Form.Group>
-            <Form.Control
-              size="sm"
-              as="select"
-              onChange={this.getTables.bind()}
-            >
-              {datasets.map((dataset, idx) => (
-                <option key={idx} value={dataset.id}>
-                  {dataset.vintage + " " + dataset.title}
-                </option>
-              ))}
-            </Form.Control>
-            <br />
-            <Typeahead
-              size="small"
-              onChange={this.getColumns.bind()}
-              labelKey={(option) => {
-                return option[Object.keys(option)[0]];
-              }}
-              options={this.state.tables}
-            />
-            <br />
-            <Typeahead
-              size="small"
-              onChange={this.setColumn.bind()}
-              filterBy={(option, props) => {
-                return this.state.columns[option].name.match(/^Estimate!!/i);
-              }}
-              labelKey={(option) => {
-                return this.state.columns[option].name
-                  .replace(/Estimate!!Total!!/g, "")
-                  .replace(/!!/g, "|");
-              }}
-              options={Object.keys(this.state.columns)}
-            />
-          </Form.Group>
-          }
-          <DemoMap selectedCol={this.state.selectedCol} />
-        </>
-      );
-    }
+  if (!isLoaded) {
+    return <div>Loading...</div>;
+  } else {
+    return (
+      <>
+        <Form.Group>
+          <Form.Control size="sm" as="select" onChange={getTables}>
+            {datasets.map((dataset, idx) => (
+              <option key={idx} value={dataset.id}>
+                {dataset.vintage + " " + dataset.title}
+              </option>
+            ))}
+          </Form.Control>
+          <br />
+          <Typeahead
+            size="small"
+            onChange={getColumns}
+            labelKey={(option) => {
+              return option[Object.keys(option)[0]];
+            }}
+            options={tables}
+          />
+          <br />
+          <Typeahead
+            size="small"
+            onChange={setColumn}
+            filterBy={(option, props) => {
+              return columns[option].name.match(/^Estimate!!/i);
+            }}
+            labelKey={(option) => {
+              // this runs 8 times???
+              console.log("columns", option);
+              return columns[option].name
+                .replace(/Estimate!!Total!!/g, "")
+                .replace(/!!/g, "|");
+            }}
+            options={Object.keys(columns)}
+          />
+        </Form.Group>
+        }
+        <DemoMap selectedCol={selectedCol} />
+      </>
+    );
   }
-}
+};
+
 export default App;
