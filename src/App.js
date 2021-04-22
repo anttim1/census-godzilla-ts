@@ -14,13 +14,13 @@ const acsCall =
 const tablesCall =
   "https://better-census-api.com/findtable?search=*&datasetid=$id";
 
-const columnsCall =
+const variablesCall =
   "https://better-census-api.com/gettable?vintage=2018&dataset=acs5&state=10&county=*&group=$group&variable=*&geography=tract&key=$key";
 
 const App = () => {
   const [tables, setTables] = useState([]);
-  const [columns, setColumns] = useState([]);
-  const [selectedCol, setSelectedCol] = useState(null);
+  const [variables, setVariables] = useState([]);
+  const [selectedVar, setSelectedVar] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [datasets, setDatasets] = useState([]);
   //  constructor(props) {
@@ -43,28 +43,28 @@ const App = () => {
       });
   };
 
-  const getColumns = (e) => {
+  const getVariables = (e) => {
     if (e[0] !== undefined) {
       fetch(
-        columnsCall
+        variablesCall
           .replace("$group", Object.keys(e[0])[0])
           .replace("$key", censusKey)
       )
         .then((res) => res.json())
         .then((result) => {
-          setColumns(result.variableInfo);
+          setVariables(result.variableInfo);
         })
         .catch((error) => {
           console.log(error);
         });
     } else {
-      console.log("can't get columns");
+      console.log("can't get variables");
     }
   };
 
-  const setColumn = (e) => {
-    console.log("setting columns");
-    setSelectedCol(e[0]);
+  const setVariable = (e) => {
+    console.log("setting variables");
+    setSelectedVar(e[0]);
   };
 
   useEffect(() => {
@@ -100,7 +100,7 @@ const App = () => {
           <br />
           <Typeahead
             size="small"
-            onChange={getColumns}
+            onChange={getVariables}
             labelKey={(option) => {
               return option[Object.keys(option)[0]];
             }}
@@ -109,22 +109,21 @@ const App = () => {
           <br />
           <Typeahead
             size="small"
-            onChange={setColumn}
+            onChange={setVariable}
             filterBy={(option, props) => {
-              return columns[option].name.match(/^Estimate!!/i);
+              return variables[option].name.match(/^Estimate!!/i);
             }}
             labelKey={(option) => {
               // this runs 8 times???
-              console.log("columns", option);
-              return columns[option].name
+              return variables[option].name
                 .replace(/Estimate!!Total!!/g, "")
                 .replace(/!!/g, "|");
             }}
-            options={Object.keys(columns)}
+            options={Object.keys(variables)}
           />
         </Form.Group>
         }
-        <DemoMap selectedCol={selectedCol} />
+        <DemoMap selectedVar={selectedVar} />
       </>
     );
   }

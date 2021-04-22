@@ -1,4 +1,4 @@
-import React, { Component, createRef } from "react";
+import React, { createRef, useState, useEffect } from "react";
 import { Map, TileLayer, Popup, GeoJSON, ZoomControl } from "react-leaflet";
 import {
   attribution,
@@ -6,7 +6,12 @@ import {
   defaultMapState,
   colorRange,
 } from "../utils/Utils";
-import { addData, getIntersect, coordsToJSON } from "../helpers/Helpers";
+import {
+  addData,
+  getIntersect,
+  coordsToJSON,
+  createRequest,
+} from "../helpers/Helpers";
 import { scaleQuantile } from "d3-scale";
 import DemoMapTooltip from "./DemoMapTooltip";
 import "leaflet/dist/leaflet.css";
@@ -16,172 +21,161 @@ import { polygon } from "@turf/turf";
 
 const TitleBlock = ({ title }) => <div className="info title">{title}</div>;
 
-export default class DemoMap extends Component {
-  state = {}; // needs to initialize, no state needed at init
+const DemoMap = (props) => {
+  const [isLoaded, setIsLoaded] = useState();
+  const [items, setItems] = useState();
+  const [variables, setVariables] = useState();
+  const [groupInfo, setGroupInfo] = useState();
+  const [colorScale, setColorScale] = useState();
+  const [quantiles, setQuantiles] = useState();
+  const [error, setError] = useState();
+  const [onScreen, setOnScreen] = useState();
 
-  mapRef = createRef();
-  layerRef = createRef();
+  const mapRef = createRef();
+  const layerRef = createRef();
 
-  fetchData = (request) =>
+  const fetchData = (request) =>
     fetch(request)
       .then((res) => res.json())
       .then(
         (result) => {
-          console.log("data", result);
           const items = addData(US_counties, result.geoIdValue);
-          const colorScale = scaleQuantile()
+          const coloScale = scaleQuantile()
             .domain(items.map((d) => d.properties.dataValue))
             .range(colorRange);
-          this.setState({
-            isLoaded: true,
-            items: items,
-            variables: result.variableInfo,
-            groupInfo: result.groupInfo,
-            colorScale: colorScale,
-            quantiles: colorScale.quantiles(),
-          });
+          setQuantiles(coloScale.quantiles());
+          setVariables(result.variableInfo);
+          setGroupInfo(result.groupInfo);
+          setItems(items);
+          setColorScale(() => coloScale);
         },
         // Note: it's important to handle errors here
         // instead of a catch() block so that we don't swallow
         // exceptions from actual bugs in components.
         (error) => {
           console.log(error);
-          this.setState({
-            isLoaded: true,
-            error,
-          });
+          setError(error);
         }
       );
 
-  handleMove = () => {
-    const map = this.mapRef.current.leafletElement;
+  const handleMove = () => {
+    const map = mapRef.current.leafletElement;
     // const dataLayer = this.layerRef.current.leafletElement
     // dataLayer.clearLayers()
     const bounds = map.getBounds();
-    const geo = this.state.items;
+    const geo = items;
     const bounds_poly = coordsToJSON([
       [bounds._northEast.lat, bounds._northEast.lng],
       [bounds._southWest.lat, bounds._southWest.lng],
     ]);
     const bounds_json = polygon(bounds_poly);
     const polysOnScreen = getIntersect(bounds_json, geo);
-    this.setState({
-      onScreen: polysOnScreen,
-    });
+    setOnScreen(polysOnScreen);
   };
 
-  updateColorScale = () => {
+  const updateColors = () => {
     const colorScale = scaleQuantile()
-      .domain(this.state.onScreen.map((d) => d.properties.dataValue))
+      .domain(onScreen.map((d) => d.properties.dataValue))
       .range(colorRange);
     const quantiles = colorScale.quantiles(); //for legend
-    this.setState({
-      colorScale: colorScale,
-      quantiles: quantiles,
-    });
+    setColorScale(() => colorScale);
+    setQuantiles(quantiles);
   };
 
-  getRequest = () => {
-    const group = this.props.selectedCol.split("_")[0];
-    const column = this.props.selectedCol.split("_")[1];
-    const url = "https://better-census-api.com/";
-    const request =
-      url +
-      "gettable?vintage=2018&dataset=acs5&group=" +
-      group +
-      "&state=36,34,42&county=*&geography=county&key=32dd72aa5e814e89c669a4664fd31dcfc3df333d&variable=" +
-      column;
-    return request;
-  };
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
 
-  componentDidMount() {
-    this.setState({
-      isLoaded: true,
-    });
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.onScreen !== prevState.onScreen) {
-      this.updateColorScale();
-    } else if (this.props.selectedCol !== prevProps.selectedCol) {
-      const request = this.getRequest();
-      this.fetchData(request);
+  useEffect(() => {
+    //only run when variable has been selected
+    if (props.selectedVar) {
+      const group = props.selectedVar.split("_")[0];
+      const variable = props.selectedVar.split("_")[1];
+      const request = createRequest(group, variable);
+      fetchData(request);
     }
-  }
+  }, [props]);
 
-  render() {
-    const isLoaded = this.state.isLoaded;
-    const items = this.state.items;
-    const variables = this.state.variables;
-    const groupInfo = this.state.groupInfo;
-    if (!isLoaded) {
-      return <div>Loading...</div>;
-    } else if (!items) {
-      console.log("map only");
-      return (
-        <Map
-          ref={this.mapRef}
-          center={[defaultMapState.lat, defaultMapState.lng]}
-          zoom={defaultMapState.zoom}
-          style={defaultMapState.mapStyle}
-          updateWhenZooming={false}
-          updateWhenIdle={true}
-          preferCanvas={true}
-          minZoom={defaultMapState.minZoom}
-          zoomControl={false}
-          //onClick={}
-        >
-          <TileLayer attribution={attribution} url={tileUrl} />
-          <ZoomControl position="topright" />
-        </Map>
-      );
-    } else {
-      console.log("with items");
-      return items ? (
-        <Map
-          ref={this.mapRef}
-          center={[defaultMapState.lat, defaultMapState.lng]}
-          zoom={defaultMapState.zoom}
-          style={defaultMapState.mapStyle}
-          updateWhenZooming={false}
-          updateWhenIdle={true}
-          preferCanvas={true}
-          minZoom={defaultMapState.minZoom}
-          onMoveEnd={this.handleMove}
-          zoomControl={false}
-          //onClick={}
-        >
-          <TitleBlock
-            title={
-              groupInfo.vintage +
-              " " +
-              groupInfo.description +
-              " " +
-              variables[Object.keys(variables)[0]].name
-            }
-          />
-          <TileLayer attribution={attribution} url={tileUrl} />
-          <ZoomControl position="topright" />
-          <GeoJSON
-            ref={this.layerRef}
-            data={items}
-            //  style={style}
-            style={(items) => ({
-              fillColor: this.state.colorScale(
-                items ? items.properties.dataValue : "#EEE"
-              ),
+  useEffect(() => {
+    if (onScreen) {
+      updateColors();
+    }
+  }, [onScreen]);
+  //  componentDidUpdate(prevProps, prevState) {
+  //if (this.state.onScreen !== prevState.onScreen) {
+  //this.updateColors();
+  //} else if (this.props.selectedVar !== prevProps.selectedVar) {
+  //const request = this.createRequest();
+  //this.fetchData(request);
+  //}
+  //  }
+
+  if (!isLoaded) {
+    return <div>Loading...</div>;
+  } else if (!items) {
+    return (
+      <Map
+        ref={mapRef}
+        center={[defaultMapState.lat, defaultMapState.lng]}
+        zoom={defaultMapState.zoom}
+        style={defaultMapState.mapStyle}
+        updateWhenZooming={false}
+        updateWhenIdle={true}
+        preferCanvas={props}
+        minZoom={defaultMapState.minZoom}
+        zoomControl={false}
+        //onClick={}
+      >
+        <TileLayer attribution={attribution} url={tileUrl} />
+        <ZoomControl position="topright" />
+      </Map>
+    );
+  } else {
+    return items && colorScale ? (
+      <Map
+        ref={mapRef}
+        center={[defaultMapState.lat, defaultMapState.lng]}
+        zoom={defaultMapState.zoom}
+        style={defaultMapState.mapStyle}
+        updateWhenZooming={false}
+        updateWhenIdle={true}
+        preferCanvas={true}
+        minZoom={defaultMapState.minZoom}
+        onMoveEnd={handleMove}
+        zoomControl={false}
+        //onClick={}
+      >
+        <TitleBlock
+          title={
+            groupInfo.vintage +
+            " " +
+            groupInfo.description +
+            " " +
+            variables[Object.keys(variables)[0]].name
+          }
+        />
+        <TileLayer attribution={attribution} url={tileUrl} />
+        <ZoomControl position="topright" />
+        <GeoJSON
+          ref={layerRef}
+          data={items}
+          style={(item) => {
+            return {
+              fillColor: colorScale(item ? item.properties.dataValue : "#EEE"),
               fillOpacity: 0.5,
               weight: 0.5,
               opacity: 0.7,
               color: "white",
               dashArray: "3",
-            })}
-          />
-          <Legend quantiles={this.state.quantiles} colorRange={colorRange} />
-        </Map>
-      ) : (
-        "Data is loading..."
-      );
-    }
+            };
+          }}
+        />
+        <Legend quantiles={quantiles} colorRange={colorRange} />
+      </Map>
+    ) : (
+      "Data is loading..."
+    );
   }
-}
+};
+
+export default DemoMap;

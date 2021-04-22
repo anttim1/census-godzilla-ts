@@ -58,3 +58,14 @@ export const coordsToJSON = (coords) => {
   ];
   return poly;
 };
+
+export const createRequest = (group, variable) => {
+  const url = "https://better-census-api.com/";
+  const request =
+    url +
+    "gettable?vintage=2018&dataset=acs5&group=" +
+    group +
+    "&state=36,34,42&county=*&geography=county&key=32dd72aa5e814e89c669a4664fd31dcfc3df333d&variable=" +
+    variable;
+  return request;
+};
