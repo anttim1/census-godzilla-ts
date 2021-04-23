@@ -121,21 +121,31 @@ export const drawChart = (data) => {
   //y.domain([0, d3.max(data, function(d) { return d.sales; })]);
 
   // append the rectangles for the bar chart
-  svg
-    .selectAll(".bar")
+  //svg
+  //.selectAll(".bar")
+  //.data(keys)
+  //.enter()
+  //.append("rect")
+  //.attr("class", "bar")
+  ////.attr("x", function(d) { return x(d.sales); })
+  //.attr("width", function (d) {
+  //return x(data[d]);
+  //})
+  //.attr("y", function (d) {
+  //return y(d);
+  //})
+  //  .attr("height", y.bandwidth());
+  let bar = svg
+    .append("g")
+    .attr("fill", "steelblue")
+    .selectAll("rect")
     .data(keys)
-    .enter()
-    .append("rect")
-    .attr("class", "bar")
-    //.attr("x", function(d) { return x(d.sales); })
-    .attr("width", function (d) {
-      return x(data[d]);
-    })
-    .attr("y", function (d) {
-      return y(d);
-    })
-    .attr("height", y.bandwidth());
-
+    .join("rect")
+    .style("mix-blend-mode", "multiply")
+    .attr("x", x(0))
+    .attr("y", (d) => y(d))
+    .attr("width", (d) => x(data[d]) - x(0))
+    .attr("height", y.bandwidth() - 1);
   // add the x Axis
   svg
     .append("g")
@@ -144,4 +154,30 @@ export const drawChart = (data) => {
 
   // add the y Axis
   svg.append("g").call(d3.axisLeft(y));
+
+  const xAxis = (g, x) =>
+    g
+      .attr("transform", `translate(0,${margin.top})`)
+      //.call(d3.axisTop(x).ticks(width / 80, "%"))
+      .call((g) =>
+        (g.selection ? g.selection() : g).select(".domain").remove()
+      );
+
+  const gx = svg.append("g").call(xAxis, x);
+
+  return Object.assign(svg.node(), {
+    update(data) {
+      const keys = Object.keys(data);
+      const t = svg.transition().duration(750);
+
+      gx.transition(t).call(xAxis, x.domain([0, d3.max(keys, (d) => keys[d])]));
+
+      bar = bar.data(keys).call((bar) =>
+        bar
+          .transition(t)
+          .attr("width", (d) => x(data[d]) - x(0))
+          .attr("y", (d) => y(d))
+      );
+    },
+  });
 };
