@@ -96,8 +96,6 @@ export const avgObjects = (objs) => {
 };
 
 export const drawChart = (data) => {
-  const keys = Object.keys(data);
-  const values = Object.values(data);
   var margin = { top: 20, right: 20, bottom: 30, left: 40 },
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
@@ -115,6 +113,9 @@ export const drawChart = (data) => {
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  const keys = Object.keys(data);
+  const values = Object.values(data);
   x.domain([0, d3.max(values)]);
   y.domain(keys);
   //y.domain([0, d3.max(data, function(d) { return d.sales; })]);
