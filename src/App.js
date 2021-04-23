@@ -63,7 +63,6 @@ const App = () => {
   };
 
   const setVariable = (e) => {
-    console.log("setting variables");
     setSelectedVar(e[0]);
   };
 
