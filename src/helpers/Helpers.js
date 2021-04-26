@@ -80,29 +80,19 @@ export const createRequest = (group, variable) => {
   return request;
 };
 
-export const sumObjects = (objs) => {
-  return objs.reduce((acc, val) => {
-    for (let k in val) {
-      if (val.hasOwnProperty(k)) acc[k] = (acc[k] || 0) + val[k];
-    }
-    return acc;
-  }, {});
-};
-
-export const avgObjects = (objs) => {
-  const sum = sumObjects(objs);
-  Object.keys(sum).forEach((key) => (sum[key] = sum[key] / objs.length));
-  return sum;
+const roundUpShare = (val, interval) => {
+  const ceil = Math.ceil(val * 10) / 10;
+  if ((((ceil * 100) / interval) * 100) % 1 === 0) return ceil;
+  else return ceil + interval;
 };
 
 export const drawChart = (data) => {
   var margin = { top: 20, right: 20, bottom: 30, left: 40 },
-    width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+    width = 400 - margin.left - margin.right,
+    height = 300 - margin.top - margin.bottom;
 
   // set the ranges
   var y = d3.scaleBand().range([height, 0]).padding(0.1);
-
   var x = d3.scaleLinear().range([0, width]);
 
   var svg = d3
@@ -116,7 +106,10 @@ export const drawChart = (data) => {
 
   const keys = Object.keys(data);
   const values = Object.values(data);
-  x.domain([0, d3.max(values)]);
+  // round x-axis up to nearest 0.2
+
+  const xMax = roundUpShare(d3.max(values), 0.1);
+  x.domain([0, xMax]);
   y.domain(keys);
   //y.domain([0, d3.max(data, function(d) { return d.sales; })]);
 
@@ -147,18 +140,18 @@ export const drawChart = (data) => {
     .attr("width", (d) => x(data[d]) - x(0))
     .attr("height", y.bandwidth() - 1);
   // add the x Axis
-  svg
-    .append("g")
-    .attr("transform", "translate(0," + height + ")")
-    .call(d3.axisBottom(x));
+  svg.append("g");
+  //.attr("transform", "translate(0," + height + ")");
+  //    .call(d3.axisBottom(x));
 
   // add the y Axis
   svg.append("g").call(d3.axisLeft(y));
 
   const xAxis = (g, x) =>
     g
-      .attr("transform", `translate(0,${margin.top})`)
-      //.call(d3.axisTop(x).ticks(width / 80, "%"))
+      //    .attr("transform", `translate(0,${margin.bottom})`)
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x).ticks(8, "f", "%"))
       .call((g) =>
         (g.selection ? g.selection() : g).select(".domain").remove()
       );
@@ -168,10 +161,12 @@ export const drawChart = (data) => {
   return Object.assign(svg.node(), {
     update(data) {
       const keys = Object.keys(data);
+      const values = Object.values(data);
       const t = svg.transition().duration(750);
 
-      gx.transition(t).call(xAxis, x.domain([0, d3.max(keys, (d) => keys[d])]));
-
+      // only transition x axis at 0.2 intervals
+      const xMax = roundUpShare(d3.max(values), 0.1);
+      gx.transition(t).call(xAxis, x.domain([0, xMax]));
       bar = bar.data(keys).call((bar) =>
         bar
           .transition(t)

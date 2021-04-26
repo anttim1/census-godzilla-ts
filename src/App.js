@@ -89,7 +89,7 @@ const App = () => {
     return (
       <>
         <Form.Group>
-          <Form.Control size="sm" as="select" onChange={getTables}>
+          <Form.Control id="dataset" size="sm" as="select" onChange={getTables}>
             {datasets.map((dataset, idx) => (
               <option key={idx} value={dataset.id}>
                 {dataset.vintage + " " + dataset.title}
@@ -98,6 +98,7 @@ const App = () => {
           </Form.Control>
           <br />
           <Typeahead
+            id="group"
             size="small"
             onChange={getVariables}
             labelKey={(option) => {
@@ -107,6 +108,7 @@ const App = () => {
           />
           <br />
           <Typeahead
+            id="variable"
             size="small"
             onChange={setVariable}
             filterBy={(option, props) => {
