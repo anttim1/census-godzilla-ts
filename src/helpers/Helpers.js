@@ -86,7 +86,8 @@ const roundUpShare = (val, interval) => {
   else return ceil + interval;
 };
 
-export const drawChart = (data) => {
+export const drawChart = (data, target) => {
+  console.log("target", target);
   var margin = { top: 20, right: 20, bottom: 30, left: 40 },
     width = 400 - margin.left - margin.right,
     height = 300 - margin.top - margin.bottom;
@@ -96,7 +97,7 @@ export const drawChart = (data) => {
   var x = d3.scaleLinear().range([0, width]);
 
   var svg = d3
-    .select("#barplot")
+    .select(target)
     .append("svg")
     //  .attr("viewBox", [0, 0, width, height]);
     .attr("width", width + margin.left + margin.right)
@@ -140,7 +141,6 @@ export const drawChart = (data) => {
     .attr("width", (d) => x(data[d]) - x(0))
     .attr("height", y.bandwidth() - 1);
   // add the x Axis
-  svg.append("g");
   //.attr("transform", "translate(0," + height + ")");
   //    .call(d3.axisBottom(x));
 
