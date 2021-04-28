@@ -56,9 +56,9 @@ export class CensusSummary {
     );
   }
 
-  calcAverage() {
-    this.summaryData = this.avgOfObjects(Object.values(this.data));
-  }
+  //  calcAverage() {
+  //this.summaryData = this.avgOfObjects(Object.values(this.data));
+  //  }
   //need to check if vars exist in data and error if not
   mapCodeToDescriptor(data) {
     return Object.assign(
@@ -66,9 +66,6 @@ export class CensusSummary {
         [this.varMap[k]]: v,
       }))
     );
-    //    return Object.entries(this.summaryData).map(
-    //([k, v]) => (this.summaryData[k] = 100)
-    //    );
   }
 
   sumShares(varList, newVar) {
@@ -80,17 +77,6 @@ export class CensusSummary {
       return acc;
     }, 0);
     this.shares[newVar] = newVal;
-  }
-
-  sumTotals(varList, newVar) {
-    const newVal = Object.entries(this.totals).reduce((acc, [k, v]) => {
-      if (varList.includes(k)) {
-        acc += v;
-        delete this.totals[k];
-      }
-      return acc;
-    }, 0);
-    this.totals[newVar] = newVal;
   }
 
   sumDataVars(varList, newVar) {

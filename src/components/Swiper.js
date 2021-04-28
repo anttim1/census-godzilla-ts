@@ -57,18 +57,13 @@ const ChartSwiper = (props) => {
           onReachEnd={() => console.log("Swiper end reached")}
         >
           <div className="swiper-wrapper">
-            <div
-              className="swiper-slide"
-              id="race-chart"
-              key={1}
-              tag="li"
-            ></div>
-            <div
-              className="swiper-slide"
-              id="education-chart"
-              key={2}
-              tag="li"
-            ></div>
+            <div className="swiper-slide" id="race-chart" key={1} tag="li">
+              <div className="swiper-title">Ethnicity</div>
+            </div>
+            <div className="swiper-slide" id="education-chart" key={2} tag="li">
+              {" "}
+              <div className="swiper-title">Education</div>
+            </div>
           </div>
         </Swiper>
       </React.Fragment>

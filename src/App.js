@@ -88,42 +88,48 @@ const App = () => {
   } else {
     return (
       <>
-        <Form.Group>
-          <Form.Control id="dataset" size="sm" as="select" onChange={getTables}>
-            {datasets.map((dataset, idx) => (
-              <option key={idx} value={dataset.id}>
-                {dataset.vintage + " " + dataset.title}
-              </option>
-            ))}
-          </Form.Control>
-          <br />
-          <Typeahead
-            id="group"
-            size="small"
-            onChange={getVariables}
-            labelKey={(option) => {
-              return option[Object.keys(option)[0]];
-            }}
-            options={tables}
-          />
-          <br />
-          <Typeahead
-            id="variable"
-            size="small"
-            onChange={setVariable}
-            filterBy={(option, props) => {
-              return variables[option].name.match(/^Estimate!!/i);
-            }}
-            labelKey={(option) => {
-              // this runs 8 times???
-              return variables[option].name
-                .replace(/Estimate!!Total!!/g, "")
-                .replace(/!!/g, "|");
-            }}
-            options={Object.keys(variables)}
-          />
-        </Form.Group>
-        }
+        <div className="form-container">
+          <Form.Group>
+            <Form.Control
+              id="dataset"
+              size="sm"
+              as="select"
+              onChange={getTables}
+            >
+              {datasets.map((dataset, idx) => (
+                <option key={idx} value={dataset.id}>
+                  {dataset.vintage + " " + dataset.title}
+                </option>
+              ))}
+            </Form.Control>
+            <br />
+            <Typeahead
+              id="group"
+              size="small"
+              onChange={getVariables}
+              labelKey={(option) => {
+                return option[Object.keys(option)[0]];
+              }}
+              options={tables}
+            />
+            <br />
+            <Typeahead
+              id="variable"
+              size="small"
+              onChange={setVariable}
+              filterBy={(option, props) => {
+                return variables[option].name.match(/^Estimate!!/i);
+              }}
+              labelKey={(option) => {
+                // this runs 8 times???
+                return variables[option].name
+                  .replace(/Estimate!!Total!!/g, "")
+                  .replace(/!!/g, "|");
+              }}
+              options={Object.keys(variables)}
+            />
+          </Form.Group>
+        </div>
         <DemoMap selectedVar={selectedVar} />
       </>
     );

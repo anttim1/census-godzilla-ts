@@ -27,6 +27,7 @@ import { polygon } from "@turf/turf";
 
 const TitleBlock = ({ title }) => <div className="info title">{title}</div>;
 
+//need to deal w negative values in data
 const DemoMap = (props) => {
   const testing = false;
 

@@ -120,7 +120,7 @@ const DataContainer = (props) => {
     }
   }, [props.onScreen]);
 
-  return summary.race && summary.education ? (
+  return summary.race && summary.education && props.onScreen ? (
     <div id="dataContainer" className="dataContainer">
       <ChartSwiper data={summary} closeChart={closeChart} />
     </div>
