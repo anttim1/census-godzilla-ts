@@ -85,10 +85,8 @@ const DemoMap = (props) => {
   }, [onScreen]);
 
   const getMapData = () => {
-    let group = "B03002";
-    let variable = "003E";
-    //  let group = props.selectedVar.split("_")[0];
-    //  let variable = props.selectedVar.split("_")[1];
+    const group = props.selectedVar.split("_")[0];
+    const variable = props.selectedVar.split("_")[1];
     setMapVariable(variable);
     const request = createRequest(group, variable);
 
@@ -147,8 +145,8 @@ const DemoMap = (props) => {
             groupInfo.vintage +
             " " +
             groupInfo.description +
-            " " +
-            variables[Object.keys(variables)[0]].name
+            " | " +
+            variables[Object.keys(variables)[0]].name.replaceAll("!!", " ")
           }
         />
         <TileLayer attribution={attribution} url={tileUrl} />

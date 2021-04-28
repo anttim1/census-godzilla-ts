@@ -6,22 +6,9 @@ import ChartSwiper from "./Swiper";
 import { fetchCensusData, createChartRequest } from "../helpers/Helpers";
 import { edVars, raceVars, CensusSummary } from "../data/ReferenceData.js";
 
-const ZcreateSummaryData = (data, varMap, sumVars) => {
+const createSummaryData = (data, varMap, sumVars, reCalc) => {
   const summary = new CensusSummary(data, varMap);
-  summary.mapDataToDescriptor();
-  Object.entries(sumVars).forEach(([key, valArr]) => {
-    console.log(key, valArr);
-    summary.sumDataVars(valArr, key);
-    summary.delDataVars(valArr);
-    console.log("manip sum", summary);
-  });
-  summary.calcAverage();
-  return summary;
-};
-
-const createSummaryData = (data, varMap, sumVars) => {
-  const summary = new CensusSummary(data, varMap);
-  summary.mapDataToDescriptor();
+  if (!reCalc) summary.mapDataToDescriptor();
   summary.getTotals();
   Object.entries(sumVars).forEach(([key, valArr]) => {
     summary.sumShares(valArr, key);
@@ -101,13 +88,35 @@ const DataContainer = (props) => {
         }))
       );
 
-      const raceSum = new CensusSummary(onScreenRace);
-      raceSum.calcAverage();
-      setSummary((prevData) => ({ ...prevData, race: raceSum.shares }));
+      const raceSummary = createSummaryData(
+        onScreenRace,
+        raceVars,
+        {
+          Other: ["Native", "Pacific", "Multi", "Other"],
+        },
+        true
+      );
+      delete raceSummary.shares["Total"];
+      setSummary((prevData) => ({ ...prevData, race: raceSummary.shares }));
 
-      const edSum = new CensusSummary(onScreenEd);
-      edSum.calcAverage();
-      setSummary((prevData) => ({ ...prevData, education: edSum.shares }));
+      const edSummary = createSummaryData(
+        onScreenEd,
+        edVars,
+        {
+          "High School": ["High School", "GED"],
+          "Some College": ["1 Y College", "1+ Y College", "Associates"],
+          Graduate: ["Master's", "Professional", "Doctorate"],
+        },
+        true
+      );
+      edSummary.shares["No Degree"] =
+        edSummary.shares["Total"] -
+        edSummary.shares["High School"] -
+        edSummary.shares["Some College"] -
+        edSummary.shares["Graduate"] -
+        edSummary.shares["Bachelor's"];
+      delete edSummary.shares["Total"];
+      setSummary((prevData) => ({ ...prevData, education: edSummary.shares }));
     }
   }, [props.onScreen]);
 

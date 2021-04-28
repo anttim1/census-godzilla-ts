@@ -98,8 +98,7 @@ const roundUpShare = (val, interval) => {
 };
 
 export const drawChart = (data, target) => {
-  console.log("target", target);
-  var margin = { top: 20, right: 20, bottom: 30, left: 40 },
+  var margin = { top: 20, right: 20, bottom: 30, left: 75 },
     width = 400 - margin.left - margin.right,
     height = 300 - margin.top - margin.bottom;
 
@@ -110,7 +109,7 @@ export const drawChart = (data, target) => {
   var svg = d3
     .select(target)
     .append("svg")
-    //  .attr("viewBox", [0, 0, width, height]);
+    //.attr("viewBox", [0, 0, width, height])
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
@@ -187,3 +186,37 @@ export const drawChart = (data, target) => {
     },
   });
 };
+
+function wrap(text, width) {
+  text.each(function () {
+    var text = d3.select(this),
+      words = text.text().split(/\s+/).reverse(),
+      word,
+      line = [],
+      lineNumber = 0,
+      lineHeight = 1.1, // ems
+      y = text.attr("y"),
+      dy = parseFloat(text.attr("dy")),
+      tspan = text
+        .text(null)
+        .append("tspan")
+        .attr("x", 0)
+        .attr("y", y)
+        .attr("dy", dy + "em");
+    while ((word = words.pop())) {
+      line.push(word);
+      tspan.text(line.join(" "));
+      if (tspan.node().getComputedTextLength() > width) {
+        line.pop();
+        tspan.text(line.join(" "));
+        line = [word];
+        tspan = text
+          .append("tspan")
+          .attr("x", 0)
+          .attr("y", y)
+          .attr("dy", ++lineNumber * lineHeight + dy + "em")
+          .text(word);
+      }
+    }
+  });
+}

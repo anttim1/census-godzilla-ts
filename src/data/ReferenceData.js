@@ -82,6 +82,17 @@ export class CensusSummary {
     this.shares[newVar] = newVal;
   }
 
+  sumTotals(varList, newVar) {
+    const newVal = Object.entries(this.totals).reduce((acc, [k, v]) => {
+      if (varList.includes(k)) {
+        acc += v;
+        delete this.totals[k];
+      }
+      return acc;
+    }, 0);
+    this.totals[newVar] = newVal;
+  }
+
   sumDataVars(varList, newVar) {
     Object.entries(this.data).forEach(([k, v]) => {
       this.sumVars(v, varList, newVar);
