@@ -80,6 +80,17 @@ export const createRequest = (group, variable) => {
   return request;
 };
 
+export const createChartRequest = (group, variable) => {
+  const url = "https://better-census-api.com/";
+  const request =
+    url +
+    "gettable?vintage=2018&dataset=acs1&group=" +
+    group +
+    "&state=36&county=*&geography=county&key=32dd72aa5e814e89c669a4664fd31dcfc3df333d&variable=" +
+    variable;
+  return request;
+};
+
 const roundUpShare = (val, interval) => {
   const ceil = Math.ceil(val * 10) / 10;
   if ((((ceil * 100) / interval) * 100) % 1 === 0) return ceil;
