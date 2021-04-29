@@ -34,7 +34,7 @@ const DataContainer = (props) => {
     console.log("fetching data");
     const raceTables = Object.keys(raceVars).map((item) => item.split("_")[1]);
     const raceRequest = createChartRequest("B03002", raceTables);
-    const incomeRequest = createChartRequest("B19013", "001E");
+    //const incomeRequest = createChartRequest("B19013", "001E"); FIXME Delete
     const edTables = Object.keys(edVars).map((item) => item.split("_")[1]);
     const edRequest = createChartRequest("C15003", edTables);
 
@@ -122,7 +122,7 @@ const DataContainer = (props) => {
 
   return summary.race && summary.education && props.onScreen ? (
     <div id="dataContainer" className="dataContainer">
-      <ChartSwiper data={summary} closeChart={closeChart} />
+      <ChartSwiper data={summary} />
     </div>
   ) : (
     "Data is loading"

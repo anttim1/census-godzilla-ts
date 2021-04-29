@@ -37,6 +37,7 @@ const App = () => {
       .then((res) => res.json())
       .then((result) => {
         setTables(result.Groups);
+        console.log('What is getTables?', result)
       })
       .catch((error) => {
         console.log(error);
