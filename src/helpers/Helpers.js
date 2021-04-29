@@ -2,10 +2,11 @@ import { intersect } from "@turf/turf";
 import * as d3 from "d3";
 
 export const matchAndStrip = (str, regex, strip, rep) => {
+  var match;
   if (regex) {
-    var match = str.match(regex);
+    match = str.match(regex);
   } else {
-    var match = 1;
+    match = 1;
   }
   if (match) {
     for (let i = 0; i < strip.length; i++) {

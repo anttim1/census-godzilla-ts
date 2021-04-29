@@ -13,10 +13,8 @@ const createSummaryData = (data, varMap, sumVars, reCalc) => {
   Object.entries(sumVars).forEach(([key, valArr]) => {
     summary.sumShares(valArr, key);
     console.log("totals", summary.totals, summary.shares);
-    //summary.delDataVars(valArr);
-    //console.log("manip sum", summary);
   });
-  //  summary.calcAverage();
+
   return summary;
 };
 
@@ -25,16 +23,15 @@ const DataContainer = (props) => {
   const [data, setData] = useState({});
   const [closeChart, setCloseChart] = useState(false);
 
-  const handleClick = () => {
-    closeChart ? setCloseChart(true) : setCloseChart(false);
-    console.log(closeChart);
-  };
+  // const handleClick = () => { //FIXME: This seems to be unnecessary
+  //   closeChart ? setCloseChart(true) : setCloseChart(false);
+  //   console.log(closeChart)
+  // };
 
   useEffect(() => {
     console.log("fetching data");
     const raceTables = Object.keys(raceVars).map((item) => item.split("_")[1]);
     const raceRequest = createChartRequest("B03002", raceTables);
-    //const incomeRequest = createChartRequest("B19013", "001E"); FIXME Delete
     const edTables = Object.keys(edVars).map((item) => item.split("_")[1]);
     const edRequest = createChartRequest("C15003", edTables);
 
@@ -66,7 +63,7 @@ const DataContainer = (props) => {
         education: edSummary.shares,
       }));
     });
-  }, []);
+  }, []); // TODO React Hook UesEffect has a missing dependency 'summary'
 
   console.log("data", data);
   useEffect(() => {
