@@ -22,9 +22,9 @@ const App = () => {
 		title: string;
 	}
 
-	const [tables, setTables] = useState<censusLabel[]>([]);
-	const [variables, setVariables] = useState<censusLabel[]>([]);
-	const [selectedVar, setSelectedVar] = useState<censusLabel | null>(null);
+	const [tables, setTables] = useState<CensusLabel[]>([]);
+	const [variables, setVariables] = useState<CensusLabel[]>([]);
+	const [selectedVar, setSelectedVar] = useState<CensusLabel | null>(null);
 	const [isLoaded, setIsLoaded] = useState(false);
 	const [datasets, setDatasets] = useState<DatasetParameters[]>([]);
 
@@ -37,7 +37,7 @@ const App = () => {
     //onSetSidebarOpen(open) {
       //this.setState({ sidebarOpen: open });
       //  }
-  type censusLabel = { [key: string]: string[] };
+  type CensusLabel = { [key: string]: string[] };
 
 	interface TableCategories {
 		AccessURL: string;
@@ -105,7 +105,7 @@ const App = () => {
 		}
 	};
 
-	const setVariable = (e: censusLabel[]) => {
+	const setVariable = (e: CensusLabel[]) => {
 		setSelectedVar(e[0]);
 	};
 
@@ -163,7 +163,7 @@ const App = () => {
 								size="small"
 								onChange={setVariable}
 								filterBy={(option, props) => {
-									return !!option[Object.keys(option)[0]][0].match(/^Estimate!!/i); // !! converts null to false
+									return !!option[Object.keys(option)[0]][0].match(/^Estimate!!/i); // '!!' converts null to false
 								}}
 								labelKey={(option) => {
 									// this runs 8 times???
@@ -176,7 +176,7 @@ const App = () => {
 						}
 					</Form.Group>
 				</div>
-				{/* <DemoMap selectedVar={selectedVar} /> */}
+				{ <DemoMap selectedVar={selectedVar} /> }
 			</>
 		);
 	}
