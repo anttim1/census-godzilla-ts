@@ -1,29 +1,55 @@
-import React, { createRef, useState, useEffect } from 'react';
-import { Map, TileLayer, Popup, GeoJSON, ZoomControl } from 'react-leaflet';
-import { attribution, tileUrl, defaultMapState, colorRange } from '../utils/Utils';
-import {
-	addData,
-	getIntersect,
-	coordsToJSON,
-	createRequest,
-	fetchCensusData,
-	//avgObjects,
-	drawChart,
-} from '../helpers/Helpers';
-// import { censusRace } from "../data/ReferenceData.js";
-import { scaleQuantile } from 'd3-scale';
-// import DemoMapTooltip from "./DemoMapTooltip";
-import DataContainer from './DataContainer';
 import 'leaflet/dist/leaflet.css';
-import US_counties from '../data/US_counties_5m.json';
-//import US_tracts from "../data/";
-import Legend from './Legend';
+
+// import { censusRace } from "../data/ReferenceData.js";
+import { ScaleQuantile, scaleQuantile } from 'd3-scale';
+import { GeoJsonObject } from 'geojson';
+import React, { createRef, useEffect, useState } from 'react';
+import { GeoJSON, Map, Popup, TileLayer, ZoomControl } from 'react-leaflet';
+
 import { polygon } from '@turf/turf';
 
+import US_counties from '../data/US_counties_5m.json';
+import {
+    addData, coordsToJSON, createRequest, drawChart, fetchCensusData, getIntersect
+} from '../helpers/Helpers';
+import { attribution, colorRange, defaultMapState, tileUrl } from '../utils/Utils';
+// import DemoMapTooltip from "./DemoMapTooltip";
+import DataContainer from './DataContainer';
+//import US_tracts from "../data/";
+import Legend from './Legend';
+
+//import GeoJsonObject from
 type CensusLabel = { [key: string]: string[] };
 
 interface MapReference {
   current: any; // FIXME this should not by any type
+}
+
+interface PolysOnMap {
+  geometry: {
+    coordinates: [number, number][];
+    type: string;
+  }
+  properties: {
+    CENSUSAREA: number
+    COUNTY: string;
+    GEO_ID: string;
+    LSAD:   string;
+    NAME:   string;
+    STATE:  string;
+    dataValue: {
+      [key: string]: number;
+    }
+  }
+}
+interface QueryType {
+  [key: string]: {
+    name: string;
+    type: string;
+  }
+}
+interface Item extends PolysOnMap {
+  type: string;
 }
 
 const TitleBlock = ({ title }: {title: string}) => <div className="info title">{title}</div>;
@@ -32,17 +58,18 @@ const TitleBlock = ({ title }: {title: string}) => <div className="info title">{
 const DemoMap = ({selectedVar}: {'selectedVar': string | null}) => {
 	const testing = false;
 
-	const [isLoaded, setIsLoaded] = useState();
-	const [items, setItems] = useState();
-	const [variables, setVariables] = useState();
-	const [mapVariable, setMapVariable] = useState();
-	const [groupInfo, setGroupInfo] = useState();
-	const [colorScale, setColorScale] = useState();
-	const [quantiles, setQuantiles] = useState();
-	const [onScreen, setOnScreen] = useState();
+	const [isLoaded, setIsLoaded] = useState<boolean>();
+	const [items, setItems] = useState<GeoJsonObject[]>();
+  // 'variables' refers to the demographic query (third form option)
+	const [variables, setVariables] = useState<QueryType>({'noData':{name: '', type: 'int'}});
+	const [mapVariable, setMapVariable] = useState<string>('');
+	const [groupInfo, setGroupInfo] = useState({vintage: 0, description: '', code: ''});
+	const [colorScale, setColorScale] = useState<ScaleQuantile<string, never>>(); /// colorScale should have function type. It's an instance of scaleQuantile
+	const [quantiles, setQuantiles] = useState<number[]>();
+	const [onScreen, setOnScreen] = useState<PolysOnMap[]>();
 
 	const mapRef: MapReference = createRef();
-	const layerRef = createRef();
+	const layerRef = createRef<GeoJSON>();
 
 	const handleMove = () => {
 		const map = mapRef.current.leafletElement;
@@ -59,11 +86,13 @@ const DemoMap = ({selectedVar}: {'selectedVar': string | null}) => {
 	};
 
 	const updateColors = () => {
-		const colorScale = scaleQuantile()
+    if (!onScreen) return;
+		const colorScale = scaleQuantile<string>()
 			.domain(onScreen.map((d) => d.properties.dataValue[mapVariable]))
 			.range(colorRange);
+
 		const quantiles = colorScale.quantiles(); //for legend
-		setColorScale(() => colorScale);
+		setColorScale(colorScale);
 		setQuantiles(quantiles);
 	};
 
@@ -87,13 +116,14 @@ const DemoMap = ({selectedVar}: {'selectedVar': string | null}) => {
 
 	const getMapData = () => {
 		const group = selectedVar?.split('_')[0];
-		const variable = selectedVar?.split('_')[1];
+    const val = selectedVar?.split('_')[1];
+		const variable = val ? val : ''; // if variable would be undefined, set it to the empty string
 		setMapVariable(variable);
 		const request = createRequest(group, variable);
 
 		fetchCensusData(request).then((result) => {
 			const items = addData(US_counties, result.geoIdValue);
-			const coloScale = scaleQuantile()
+			const coloScale = scaleQuantile<string>()
 				.domain(items.map((d) => d.properties.dataValue[variable]))
 				.range(colorRange);
 			setQuantiles(coloScale.quantiles());
@@ -116,17 +146,20 @@ const DemoMap = ({selectedVar}: {'selectedVar': string | null}) => {
 				style={defaultMapState.mapStyle}
 				updateWhenZooming={false}
 				updateWhenIdle={true}
-				preferCanvas={{'selectedVar':selectedVar}}
+				preferCanvas={true}
 				minZoom={defaultMapState.minZoom}
 				zoomControl={false}
 				//onClick={}
 			>
 				<TileLayer attribution={attribution} url={tileUrl} />
 				<ZoomControl position="topright" />
-				<DataContainer />
+				{/* <DataContainer /> */}
 			</Map>
 		);
 	} else {
+    console.log('Items:', items);
+    console.log('colorScale:', colorScale);
+
 		return items && colorScale ? (
 			<Map
 				ref={mapRef}
@@ -167,11 +200,11 @@ const DemoMap = ({selectedVar}: {'selectedVar': string | null}) => {
 						};
 					}}
 				/>
-				<DataContainer onScreen={onScreen} />
-				<Legend quantiles={quantiles} colorRange={colorRange} />
+				{/* <DataContainer onScreen={onScreen} />
+				<Legend quantiles={quantiles} colorRange={colorRange} /> */}
 			</Map>
 		) : (
-			'Data is loading...'
+			<h2>Data is loading...</h2>
 		);
 	}
 };

@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import DemoMap from './components/DemoMap';
 import 'leaflet/dist/leaflet.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './css/typeahead.css';
+
+import React, { useEffect, useState } from 'react';
+import { Typeahead } from 'react-bootstrap-typeahead';
 //import Sidebar from "react-sidebar"; // Sidebar is unused in original fork
 import Form from 'react-bootstrap/Form';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { Typeahead } from 'react-bootstrap-typeahead';
-import "./css/typeahead.css";
+
+import DemoMap from './components/DemoMap';
 
 const censusKey = '32dd72aa5e814e89c669a4664fd31dcfc3df333d';
 
@@ -21,23 +23,26 @@ const App = () => {
 		vintage: number;
 		title: string;
 	}
-
+	interface InitialQueryType {
+	 name: string;
+   type: string;
+	}
 	const [tables, setTables] = useState<CensusLabel[]>([]);
 	const [variables, setVariables] = useState<CensusLabel[]>([]);
-	const [selectedVar, setSelectedVar] = useState<CensusLabel | null>(null);
+	const [selectedVar, setSelectedVar] = useState<string>('');
 	const [isLoaded, setIsLoaded] = useState(false);
 	const [datasets, setDatasets] = useState<DatasetParameters[]>([]);
 
-  // NOTE: This is commented out from the original fork
+	// NOTE: This is commented out from the original fork
 	//  constructor(props) {
-    //super(props);
-    //this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
-    //}
+	//super(props);
+	//this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
+	//}
 
-    //onSetSidebarOpen(open) {
-      //this.setState({ sidebarOpen: open });
-      //  }
-  type CensusLabel = { [key: string]: string[] };
+	//onSetSidebarOpen(open) {
+	//this.setState({ sidebarOpen: open });
+	//  }
+	type CensusLabel = { [key: string]: string[] };
 
 	interface TableCategories {
 		AccessURL: string;
@@ -49,6 +54,7 @@ const App = () => {
 			.then((res) => res.json())
 			.then((result: TableCategories) => {
 				setTables(
+					// This will probably cause a crash
 					result.Groups.flatMap((data: { [key: string]: string }) =>
 						Object.entries(data).map(([key, value]) => ({ [key]: [value] }))
 					)
@@ -88,14 +94,15 @@ const App = () => {
 	// 	education: any; // Should be an object of educationCounts types
 	// }
 	// e is an array with one index, whose key is code for the census query and value is the query in english
-	const getVariables = (e: { [key: string]: string[] }[]): void => {
+	const getVariables = (e: CensusLabel[]): void => {
 		if (e[0] !== undefined) {
 			fetch(variablesCall.replace('$group', Object.keys(e[0])[0]).replace('$key', censusKey))
 				.then((res) => res.json())
-				.then((result: { variableInfo: DatasetParameters }) => {
-					setVariables(
+				.then((result: { variableInfo: { [key: string]: InitialQueryType } }) => {
+					setVariables( //NOTE the type here should be an Object of CensusLables
 						Object.entries(result.variableInfo).map(([key, value]) => ({ [key]: Object.values(value) }))
 					);
+					//setVariables(result.variableInfo);
 				})
 				.catch((error) => {
 					console.log(error);
@@ -106,14 +113,14 @@ const App = () => {
 	};
 
 	const setVariable = (e: CensusLabel[]) => {
-		setSelectedVar(e[0]);
+		setSelectedVar(Object.keys(e[0])[0]);
 	};
 
 	interface UnprocessedCensusYearsData {
 		Dataset_ID: number;
 		Title: string;
 		Vintage: number;
-	};
+	}
 
 	useEffect(() => {
 		fetch(acsCall)
@@ -176,7 +183,7 @@ const App = () => {
 						}
 					</Form.Group>
 				</div>
-				{ <DemoMap selectedVar={selectedVar} /> }
+				<DemoMap selectedVar={selectedVar} />
 			</>
 		);
 	}
