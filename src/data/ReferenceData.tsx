@@ -132,7 +132,7 @@ export class CensusSummary {
 			}
 			return acc;
 		}, 0);
-		this.shares[newVar] = newVal; //TODO newVal should be of type number
+		this.shares[newVar] = newVal;
 	}
 
 	// sumDataVars(varList, newVar) {
@@ -150,7 +150,7 @@ export class CensusSummary {
 	mapDataToDescriptor() {
 		Object.entries(this.data).forEach(([k, v]) => {
 			const newItem = this.mapCodeToDescriptor(v);
-			this.data[k] = newItem; // TODO newItem should be of type EducationCategories or RaceCategories
+			this.data[k] = newItem;
 		});
 	}
 

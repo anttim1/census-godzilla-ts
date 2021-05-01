@@ -6,11 +6,11 @@ import { GeoJsonObject } from 'geojson';
 import React, { createRef, useEffect, useState } from 'react';
 import { GeoJSON, Map, Popup, TileLayer, ZoomControl } from 'react-leaflet';
 
-import { polygon } from '@turf/turf';
+import { Feature, Polygon, polygon, Properties } from '@turf/turf';
 
 import US_counties from '../data/US_counties_5m.json';
 import {
-    addData, coordsToJSON, createRequest, drawChart, fetchCensusData, getIntersect
+    addData, coordsToJSON, createRequest, fetchCensusData, getIntersect
 } from '../helpers/Helpers';
 import { attribution, colorRange, defaultMapState, tileUrl } from '../utils/Utils';
 // import DemoMapTooltip from "./DemoMapTooltip";
@@ -46,9 +46,6 @@ interface QueryType {
     type: string;
   }
 }
-interface Item extends PolysOnMap {
-  type: string;
-}
 
 const TitleBlock = ({ title }: {title: string}) => <div className="info title">{title}</div>;
 
@@ -57,14 +54,14 @@ const DemoMap = ({selectedVar}: {'selectedVar': string | null}) => {
 	const testing = false;
 
 	const [isLoaded, setIsLoaded] = useState<boolean>();
-	const [items, setItems] = useState<GeoJsonObject[]>();
+	const [items, setItems] = useState<Feature<Polygon, Properties>[]>([]);
   // 'variables' refers to the demographic query (third form option)
 	const [variables, setVariables] = useState<QueryType>({'noData':{name: '', type: 'int'}});
 	const [mapVariable, setMapVariable] = useState<string>('');
 	const [groupInfo, setGroupInfo] = useState({vintage: 0, description: '', code: ''});
 	const [colorScale, setColorScale] = useState<ScaleQuantile<string, never>>(); /// colorScale should have function type. It's an instance of scaleQuantile
 	const [quantiles, setQuantiles] = useState<number[]>();
-	const [onScreen, setOnScreen] = useState<PolysOnMap[]>();
+	const [onScreen, setOnScreen] = useState<Feature<Polygon, Properties>[]>();
 
 	const mapRef: MapReference = createRef();
 	const layerRef = createRef<GeoJSON>();
@@ -86,7 +83,7 @@ const DemoMap = ({selectedVar}: {'selectedVar': string | null}) => {
 	const updateColors = () => {
     if (!onScreen) return;
 		const colorScale = scaleQuantile<string>()
-			.domain(onScreen.map((d) => d.properties.dataValue[mapVariable]))
+			.domain(onScreen.map((d) => d.properties?.dataValue[mapVariable]))
 			.range(colorRange);
 
 		const quantiles = colorScale.quantiles(); //for legend
@@ -116,9 +113,12 @@ const DemoMap = ({selectedVar}: {'selectedVar': string | null}) => {
 	const getMapData = () => {
 		const group = selectedVar?.split('_')[0];
     const val = selectedVar?.split('_')[1];
-		const variable = val ? val : ''; // if variable would be undefined, set it to the empty string
+    // This fixes potentially undefined value when we invoke createRequest
+    const groupVal = group ? group : '';
+    // This fixes the type when we invoke createRequest
+		const variable = val ? val : '';
 		setMapVariable(variable);
-		const request = createRequest(group, variable);
+		const request = createRequest(groupVal, variable);
 
 		fetchCensusData(request).then((result) => {
 			const items = addData(US_counties, result.geoIdValue);

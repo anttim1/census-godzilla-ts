@@ -102,9 +102,6 @@ const App = () => {
 
 	const setVariable = (e: CensusLabel[]) => {
 		if ( !Array.isArray(e)|| !e?.length) return setSelectedVar('');
-    // FIXME TypeError: Cannot convert undefined or null to object
-    console.log('!!!', e)
-
     const selectedQuery = Object.keys(e[0])[0];
     setSelectedVar( selectedQuery );
 
@@ -163,7 +160,7 @@ const App = () => {
 							<Typeahead
 								id="variable"
 								size="small"
-								onChange={setVariable}
+								onChange={setVariable} // Consider using a selected method here instead
 								filterBy={(option, props) => {
 									return !!option[Object.keys(option)[0]][0].match(/^Estimate!!/i); // '!!' converts null to false
 								}}

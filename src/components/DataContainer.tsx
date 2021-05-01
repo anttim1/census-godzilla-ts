@@ -3,7 +3,6 @@ import '../css/dataContainer.css';
 import '../css/styles.css';
 
 import React, { useEffect, useState } from 'react';
-
 import { CensusSummary, edVars, raceVars, EducationCategories, RaceCategories} from '../data/ReferenceData';
 import { createChartRequest, fetchCensusData } from '../helpers/Helpers';
 import ChartSwiper from './Swiper';
@@ -47,7 +46,7 @@ reCalc?: boolean
 const DataContainer = ({ onScreen }: { onScreen: PolysOnMap[] | undefined}) => {
 	const [summary, setSummary] = useState({ race: {}, education: {} });
 	const [data, setData] = useState<AnyObject>({}); // This could be better typed with an interface that has race and education?
-	const [closeChart, setCloseChart] = useState(false);
+	// const [closeChart, setCloseChart] = useState(false);
 
 	// const handleClick = () => { //FIXME: This seems to be unnecessary
 	//   closeChart ? setCloseChart(true) : setCloseChart(false);
@@ -102,6 +101,7 @@ const DataContainer = ({ onScreen }: { onScreen: PolysOnMap[] | undefined}) => {
 			const onScreenRace = Object.assign({},
         // FIXME TypeError: Cannot read property '36011' of undefined
 				...onScreenGeoIDs.map((key) => ({
+					//[key]: (data.race) ? data.race[key]:undefined,
 					[key]: (data.race) ? data.race[key]:undefined,
 				}))
 			);
