@@ -106,7 +106,6 @@ export const drawChart = (data, target) => {
   // set the ranges
   var y = d3.scaleBand().range([height, 0]).padding(0.1);
   var x = d3.scaleLinear().range([0, width]);
-
   var svg = d3
     .select(target)
     .append("svg")

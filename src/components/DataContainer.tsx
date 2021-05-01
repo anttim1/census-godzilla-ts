@@ -100,15 +100,16 @@ const DataContainer = ({ onScreen }: { onScreen: PolysOnMap[] | undefined}) => {
 				onScreenGeoIDs.push(geoId);
 			}
 			const onScreenRace = Object.assign({},
+        // FIXME TypeError: Cannot read property '36011' of undefined
 				...onScreenGeoIDs.map((key) => ({
-          // FIXME TypeError: Cannot read property '36011' of undefined
-					[key]: data.race[key],
+					[key]: (data.race) ? data.race[key]:undefined,
 				}))
 			);
 
 			const onScreenEd = Object.assign({},
+        // FIXME TypeError: Cannot read property '36011' of undefined
 				...onScreenGeoIDs.map((key) => ({
-					[key]: data?.education[key],
+          [key]: (data.education)? data.education[key]:undefined,
 				}))
 			);
 

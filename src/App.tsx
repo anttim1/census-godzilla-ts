@@ -101,7 +101,14 @@ const App = () => {
 	};
 
 	const setVariable = (e: CensusLabel[]) => {
-		setSelectedVar(Object.keys(e[0])[0]);
+		if ( !Array.isArray(e)|| !e?.length) return setSelectedVar('');
+    // FIXME TypeError: Cannot convert undefined or null to object
+    console.log('!!!', e)
+
+    const selectedQuery = Object.keys(e[0])[0];
+    setSelectedVar( selectedQuery );
+
+		// else setSelectedVar('');
 	};
 
 	interface UnprocessedCensusYearsData {
