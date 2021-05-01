@@ -7,10 +7,20 @@ import "../css/styles.css";
 //import "swiper/components/navigation/navigation.scss"; // Import Swiper styles
 //import 'swiper/swiper.scss';
 // install Swiper modules
+
+type AnyObject = { [key: string]: any };
+
+interface SummeryData {
+  data: {
+    race: AnyObject;
+    education: AnyObject;
+  }
+}
+
 SwiperCore.use([Navigation]);
-const ChartSwiper = (props) => {
-  const [raceChart, setRaceChart] = useState();
-  const [edChart, setEdChart] = useState();
+const ChartSwiper = (props: SummeryData) => {
+  const [raceChart, setRaceChart] = useState<AnyObject>();
+  const [edChart, setEdChart] = useState<AnyObject>();
 
   useEffect(() => {
     if (props.data) {
@@ -22,7 +32,7 @@ const ChartSwiper = (props) => {
 
   useEffect(() => {
     console.log("updating");
-    if (raceChart) {
+    if (raceChart && edChart) {
       console.log("updating2");
       raceChart.update(props.data.race);
       edChart.update(props.data.education);
@@ -37,14 +47,13 @@ const ChartSwiper = (props) => {
   //  }, [props.closeChart]);
 
   if (props) {
-    console.log(props);
     return (
       <React.Fragment>
         <Swiper
           id="main"
           //thumbs={{ swiper: thumbsSwiper }}
           //controller={{ control: controlledSwiper }}
-          tag="section"
+          data-tag="section"
           wrapperTag="ul"
           navigation
           pagination
@@ -57,10 +66,10 @@ const ChartSwiper = (props) => {
           onReachEnd={() => console.log("Swiper end reached")}
         >
           <div className="swiper-wrapper">
-            <div className="swiper-slide" id="race-chart" key={1} tag="li">
+            <div className="swiper-slide" id="race-chart" key={1} data-tag="li">
               <div className="swiper-title">Ethnicity</div>
             </div>
-            <div className="swiper-slide" id="education-chart" key={2} tag="li">
+            <div className="swiper-slide" id="education-chart" key={2} data-tag="li">
               {" "}
               <div className="swiper-title">Education</div>
             </div>
@@ -69,6 +78,7 @@ const ChartSwiper = (props) => {
       </React.Fragment>
     );
   }
+  else return null;
 };
 
 export default ChartSwiper;

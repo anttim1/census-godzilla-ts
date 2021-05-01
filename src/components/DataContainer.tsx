@@ -4,7 +4,7 @@ import '../css/styles.css';
 
 import React, { useEffect, useState } from 'react';
 
-import { CensusSummary, edVars, raceVars, EducationCategories, RaceCategories, EducationDemographic} from '../data/ReferenceData';
+import { CensusSummary, edVars, raceVars, EducationCategories, RaceCategories} from '../data/ReferenceData';
 import { createChartRequest, fetchCensusData } from '../helpers/Helpers';
 import ChartSwiper from './Swiper';
 
@@ -26,9 +26,11 @@ interface PolysOnMap {
 	};
 }
 
+type AnyObject = { [key: string]: any };
+
 const createSummaryData = (
-data: {[key: string]:EducationDemographic},
-varMap: RaceCategories | EducationCategories,
+data: {[key: string]:EducationCategories},
+varMap: AnyObject,
 sumVars: {[key: string]: string[]},
 reCalc?: boolean
 ) => {
@@ -43,8 +45,8 @@ reCalc?: boolean
 };
 
 const DataContainer = ({ onScreen }: { onScreen: PolysOnMap[] | undefined}) => {
-	const [summary, setSummary] = useState({ race: null, education: null });
-	const [data, setData] = useState({});
+	const [summary, setSummary] = useState({ race: {}, education: {} });
+	const [data, setData] = useState<AnyObject>({}); // This could be better typed with an interface that has race and education?
 	const [closeChart, setCloseChart] = useState(false);
 
 	// const handleClick = () => { //FIXME: This seems to be unnecessary
@@ -97,15 +99,16 @@ const DataContainer = ({ onScreen }: { onScreen: PolysOnMap[] | undefined}) => {
 				const geoId = item.properties.GEO_ID.split('US')[1];
 				onScreenGeoIDs.push(geoId);
 			}
-			const onScreenRace = Object.assign(
+			const onScreenRace = Object.assign({},
 				...onScreenGeoIDs.map((key) => ({
+          // FIXME TypeError: Cannot read property '36011' of undefined
 					[key]: data.race[key],
 				}))
 			);
 
-			const onScreenEd = Object.assign(
+			const onScreenEd = Object.assign({},
 				...onScreenGeoIDs.map((key) => ({
-					[key]: data.education[key],
+					[key]: data?.education[key],
 				}))
 			);
 
@@ -143,7 +146,7 @@ const DataContainer = ({ onScreen }: { onScreen: PolysOnMap[] | undefined}) => {
 
 	return summary.race && summary.education && onScreen ? (
 		<div id="dataContainer" className="dataContainer">
-			<ChartSwiper data={summary} />
+		<ChartSwiper data = {summary} />
 		</div>
 	) : (
 		<h3>'Data is loading'</h3>
