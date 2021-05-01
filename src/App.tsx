@@ -66,18 +66,6 @@ const App = () => {
 			});
 	};
 
-	// interface educationCounts { // FIXME This appears to be unnecessary
-	// 	'1 Y College': number;
-	// 	'1+ Y College': number;
-	// 	Associates: number;
-	// 	"Bachelor's": number;
-	// 	Doctorate: number;
-	// 	GED: number;
-	// 	'High School': number;
-	// 	"Master's": number;
-	// 	Professional: number;
-	// 	Total: number;
-	// }
 	// interface raceCounts {
 	// 	Asian: number;
 	// 	Black: number;

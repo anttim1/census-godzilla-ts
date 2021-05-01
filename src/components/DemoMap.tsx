@@ -14,12 +14,10 @@ import {
 } from '../helpers/Helpers';
 import { attribution, colorRange, defaultMapState, tileUrl } from '../utils/Utils';
 // import DemoMapTooltip from "./DemoMapTooltip";
-import DataContainer from './DataContainer';
-//import US_tracts from "../data/";
-import Legend from './Legend';
+ import DataContainer from './DataContainer';
+// import US_tracts from "../data/";
+// import Legend from './Legend';
 
-//import GeoJsonObject from
-type CensusLabel = { [key: string]: string[] };
 
 interface MapReference {
   current: any; // FIXME this should not by any type
@@ -199,11 +197,11 @@ const DemoMap = ({selectedVar}: {'selectedVar': string | null}) => {
 						};
 					}}
 				/>
-				{/* <DataContainer onScreen={onScreen} />
-				<Legend quantiles={quantiles} colorRange={colorRange} /> */}
+				<DataContainer onScreen={onScreen} />
+      {/*<Legend quantiles={quantiles} colorRange={colorRange} /> */}
 			</Map>
 		) : (
-			<h2>Data is loading...</h2>
+			<h3>Data is loading...</h3>
 		);
 	}
 };
