@@ -3,27 +3,10 @@ import '../css/dataContainer.css';
 import '../css/styles.css';
 
 import React, { useEffect, useState } from 'react';
-import { CensusSummary, edVars, raceVars, EducationCategories, RaceCategories} from '../data/ReferenceData';
+import { CensusSummary, edVars, raceVars, EducationCategories} from '../data/ReferenceData';
 import { createChartRequest, fetchCensusData } from '../helpers/Helpers';
 import ChartSwiper from './Swiper';
-
-interface PolysOnMap {
-	geometry: {
-		coordinates: [number, number][];
-		type: string;
-	};
-	properties: {
-		CENSUSAREA: number;
-		COUNTY: string;
-		GEO_ID: string;
-		LSAD: string;
-		NAME: string;
-		STATE: string;
-		dataValue: {
-			[key: string]: number;
-		};
-	};
-}
+import { Feature, Polygon, Properties } from '@turf/turf';
 
 type AnyObject = { [key: string]: any };
 
@@ -43,7 +26,7 @@ reCalc?: boolean
 	return summary;
 };
 
-const DataContainer = ({ onScreen }: { onScreen: PolysOnMap[] | undefined}) => {
+const DataContainer = ({ onScreen }: { onScreen: Feature<Polygon, Properties>[] | undefined}) => {
 	const [summary, setSummary] = useState({ race: {}, education: {} });
 	const [data, setData] = useState<AnyObject>({}); // This could be better typed with an interface that has race and education?
 	// const [closeChart, setCloseChart] = useState(false);
@@ -88,28 +71,25 @@ const DataContainer = ({ onScreen }: { onScreen: PolysOnMap[] | undefined}) => {
 				education: edSummary.shares,
 			}));
 		});
-	}, []); // TODO React Hook UesEffect has a missing dependency 'summary'
+	}, []);
 
 	console.log('data', data);
 	useEffect(() => {
-		if (onScreen) {
+		if (onScreen && Object.keys(data).length) {
 			const onScreenGeoIDs = [];
 			for (let item of onScreen) {
-				const geoId = item.properties.GEO_ID.split('US')[1];
-				onScreenGeoIDs.push(geoId);
+        const geoId = item.properties?.GEO_ID.split('US')[1];
+        onScreenGeoIDs.push(geoId);
 			}
 			const onScreenRace = Object.assign({},
-        // FIXME TypeError: Cannot read property '36011' of undefined
 				...onScreenGeoIDs.map((key) => ({
-					//[key]: (data.race) ? data.race[key]:undefined,
-					[key]: (data.race) ? data.race[key]:undefined,
+					[key]: data.race[key],
 				}))
 			);
 
 			const onScreenEd = Object.assign({},
-        // FIXME TypeError: Cannot read property '36011' of undefined
 				...onScreenGeoIDs.map((key) => ({
-          [key]: (data.education)? data.education[key]:undefined,
+          [key]: data.education[key],
 				}))
 			);
 

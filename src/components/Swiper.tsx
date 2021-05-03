@@ -36,12 +36,40 @@ const ChartSwiper = (props: SummeryData) => {
 	useEffect(() => {
 		console.log('updating');
 		if (raceChart) {
-			console.log(props.data.race);
-			raceChart.update(props.data.race);
+      // Here we take steps to correct any errors in the data before we pass it to the chart
+			const currentValue = Object.assign(
+				{
+					Asian: 0,
+					Black: 0,
+					Hispanic: 0,
+					Other: 0,
+					White: 0,
+				},
+				props.data.race
+			);
+      for (const key in currentValue) {
+        if (!currentValue[key]) currentValue[key] = 0;
+      }
+			console.log('🛹', currentValue);
+			raceChart.update(currentValue);
 		}
 		if (edChart) {
-			console.log(props.data.education);
-			edChart.update(props.data.education);
+      // Here we take steps to correct any errors in the data before we pass it to the chart
+			const currentValue = Object.assign(
+        {
+          "Bachelor's": 0,
+          Graduate: 0,
+          'High School': 0,
+          'No Degree': 0,
+          'Some College': 0,
+        },
+        props.data.education
+        );
+        for (const key in currentValue) {
+          if (!currentValue[key]) currentValue[key] = 0;
+        }
+			console.log('🛹', currentValue);
+			edChart.update(currentValue);
 		}
 	}, [props.data]);
 

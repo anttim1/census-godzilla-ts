@@ -86,7 +86,7 @@ export class CensusSummary {
 	}
 
 	sumObjects = <T extends AnyObject>(objs: T[]) => {
-		console.log('objsforsum', objs);
+		//console.log('objsforsum', objs);
 
 		return objs.reduce((acc: Partial<T>, val: T) => {
       // FIXME TypeError: Cannot convert undefined or null to object. Maybe this is fixed now?

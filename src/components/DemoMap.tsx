@@ -2,9 +2,8 @@ import 'leaflet/dist/leaflet.css';
 
 // import { censusRace } from "../data/ReferenceData.js";
 import { ScaleQuantile, scaleQuantile } from 'd3-scale';
-import { GeoJsonObject } from 'geojson';
 import React, { createRef, useEffect, useState } from 'react';
-import { GeoJSON, Map, Popup, TileLayer, ZoomControl } from 'react-leaflet';
+import { GeoJSON, Map, TileLayer, ZoomControl } from 'react-leaflet';
 
 import { Feature, Polygon, polygon, Properties } from '@turf/turf';
 
@@ -23,23 +22,6 @@ interface MapReference {
   current: any; // FIXME this should not by any type
 }
 
-interface PolysOnMap {
-  geometry: {
-    coordinates: [number, number][];
-    type: string;
-  }
-  properties: {
-    CENSUSAREA: number
-    COUNTY: string;
-    GEO_ID: string;
-    LSAD:   string;
-    NAME:   string;
-    STATE:  string;
-    dataValue: {
-      [key: string]: number;
-    }
-  }
-}
 interface QueryType {
   [key: string]: {
     name: string;
@@ -202,6 +184,7 @@ const DemoMap = ({selectedVar}: {'selectedVar': string | null}) => {
 			</Map>
 		) : (
 			<h3>Data is loading...</h3>
+
 		);
 	}
 };

@@ -1,13 +1,7 @@
 import { Feature, intersect, Polygon, Properties } from "@turf/turf";
 import * as d3 from "d3";
-import { GeoJsonObject } from 'geojson';
 
 type AnyObject = { [key: string]: any };
-
-interface SummeryData {
-  race: AnyObject;
-  education: AnyObject;
-}
 
 // export const matchAndStrip = (str:string, regex:string, strip, rep) => {
 //   var match;
@@ -183,13 +177,17 @@ export const drawChart = (data: AnyObject, target: string) => {
     update(data: {[key:string]: number}) {
       const keys = Object.keys(data);
       const values = Object.values(data);
-      const t = svg.transition().duration(750);
+      const t= svg.transition().duration(750);
 
       // only transition x axis at 0.2 intervals
       let maxValue = d3.max(values);
       if (!maxValue) maxValue=0;
       const xMax = roundUpShare(maxValue, 0.1);
-      gx.transition(t).call(xAxis, x.domain([0, xMax]));
+      // gx.transition(t).call(xAxis, x.domain([0, xMax]));
+      gx.transition()
+      .transition()
+      .duration(750)
+      .call(xAxis, x.domain([0, xMax]));
       bar = bar.data(keys).call((bar:any) =>
         bar
           .transition(t)
