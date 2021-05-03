@@ -27,7 +27,7 @@ const ChartSwiper = (props: SummeryData) => {
 
 	useEffect(() => {
 		if (props.data) {
-			console.log('props', props);
+      console.log('🌊',props.data)
 			setRaceChart(drawChart(props.data.race, '#race-chart'));
 			setEdChart(drawChart(props.data.education, '#education-chart'));
 		}

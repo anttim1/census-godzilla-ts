@@ -108,6 +108,7 @@ export const drawChart = (data: AnyObject, target: string) => {
   // set the ranges
   var y = d3.scaleBand().range([height, 0]).padding(0.1);
   var x = d3.scaleLinear().range([0, width]);
+
   var svg = d3
     .select(target)
     .append("svg")
@@ -184,10 +185,8 @@ export const drawChart = (data: AnyObject, target: string) => {
       if (!maxValue) maxValue=0;
       const xMax = roundUpShare(maxValue, 0.1);
       // gx.transition(t).call(xAxis, x.domain([0, xMax]));
-      gx.transition()
-      .transition()
-      .duration(750)
-      .call(xAxis, x.domain([0, xMax]));
+      //@ts-ignore
+      gx.transition(t).call(xAxis, x.domain([0, xMax]));
       bar = bar.data(keys).call((bar:any) =>
         bar
           .transition(t)

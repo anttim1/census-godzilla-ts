@@ -33,7 +33,9 @@ const TitleBlock = ({ title }: {title: string}) => <div className="info title">{
 
 //need to deal w negative values in data
 const DemoMap = ({selectedVar}: {'selectedVar': string | null}) => {
-	const testing = false;
+  if (selectedVar === '') selectedVar = null;
+  console.log('Initial selectedVar', selectedVar, typeof selectedVar)
+	// const testing = false;
 
 	const [isLoaded, setIsLoaded] = useState<boolean>();
 	const [items, setItems] = useState<Feature<Polygon, Properties>[]>([]);
@@ -41,7 +43,7 @@ const DemoMap = ({selectedVar}: {'selectedVar': string | null}) => {
 	const [variables, setVariables] = useState<QueryType>({'noData':{name: '', type: 'int'}});
 	const [mapVariable, setMapVariable] = useState<string>('');
 	const [groupInfo, setGroupInfo] = useState({vintage: 0, description: '', code: ''});
-	const [colorScale, setColorScale] = useState<ScaleQuantile<string, never>>(); /// colorScale should have function type. It's an instance of scaleQuantile
+	const [colorScale, setColorScale] = useState<ScaleQuantile<string, never>>();
 	const [quantiles, setQuantiles] = useState<number[]>();
 	const [onScreen, setOnScreen] = useState<Feature<Polygon, Properties>[]>();
 
@@ -76,12 +78,15 @@ const DemoMap = ({selectedVar}: {'selectedVar': string | null}) => {
 
 	useEffect(() => {
 		setIsLoaded(true);
-		if (testing) getMapData();
+    console.log('We should see this fire on load')
+    console.log(items)
+		//updateColors();
 	}, []);
 
 	useEffect(() => {
 		//only run when variable has been selected
 		if (selectedVar) {
+      console.log('Inside block', selectedVar)
 			getMapData();
 		}
 	}, [selectedVar]);
@@ -111,36 +116,15 @@ const DemoMap = ({selectedVar}: {'selectedVar': string | null}) => {
 			setVariables(result.variableInfo);
 			setGroupInfo(result.groupInfo);
 			setItems(items);
-			console.log(items);
 			setColorScale(() => coloScale);
 		});
 	};
 
 	if (!isLoaded) {
 		return <div>Loading...</div>;
-	} else if (!items) {
+	} else if (colorScale) {
 		return (
-			<Map
-				ref={mapRef}
-				center={[defaultMapState.lat, defaultMapState.lng]}
-				zoom={defaultMapState.zoom}
-				style={defaultMapState.mapStyle}
-				updateWhenZooming={false}
-				updateWhenIdle={true}
-				preferCanvas={true}
-				minZoom={defaultMapState.minZoom}
-				zoomControl={false}
-				//onClick={}
-			>
-				<TileLayer attribution={attribution} url={tileUrl} />
-				<ZoomControl position="topright" />
-				{/* <DataContainer /> */}
-			</Map>
-		);
-	} else {
-
-		return items && colorScale ? (
-			<Map
+      <Map
 				ref={mapRef}
 				center={[defaultMapState.lat, defaultMapState.lng]}
 				zoom={defaultMapState.zoom}
@@ -182,8 +166,31 @@ const DemoMap = ({selectedVar}: {'selectedVar': string | null}) => {
 				<DataContainer onScreen={onScreen} />
       {/*<Legend quantiles={quantiles} colorRange={colorRange} /> */}
 			</Map>
+
+		);
+	} else {
+    console.log('🌈',colorScale)
+		return items ? (
+			<Map
+				ref={mapRef}
+				center={[defaultMapState.lat, defaultMapState.lng]}
+				zoom={defaultMapState.zoom}
+				style={defaultMapState.mapStyle}
+				updateWhenZooming={false}
+				updateWhenIdle={true}
+				preferCanvas={true}
+				minZoom={defaultMapState.minZoom}
+				zoomControl={false}
+        onMoveEnd={handleMove}
+				//onClick={}
+			>
+				<TileLayer attribution={attribution} url={tileUrl} />
+				<ZoomControl position="topright" />
+				{/* <DataContainer /> */}
+			</Map>
 		) : (
-			<h3>Data is loading...</h3>
+			<h2>Data is loading...</h2>
+
 
 		);
 	}

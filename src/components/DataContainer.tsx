@@ -3,7 +3,7 @@ import '../css/dataContainer.css';
 import '../css/styles.css';
 
 import React, { useEffect, useState } from 'react';
-import { CensusSummary, edVars, raceVars, EducationCategories} from '../data/ReferenceData';
+import { CensusSummary, edVars, raceVars, EducationCategories, RaceCategories} from '../data/ReferenceData';
 import { createChartRequest, fetchCensusData } from '../helpers/Helpers';
 import ChartSwiper from './Swiper';
 import { Feature, Polygon, Properties } from '@turf/turf';
@@ -19,10 +19,11 @@ reCalc?: boolean
 	const summary = new CensusSummary(data, varMap);
 	if (!reCalc) summary.mapDataToDescriptor();
 	summary.getTotals();
+  console.log('summary initial',summary)
 	Object.entries(sumVars).forEach(([key, valArr]) => {
 		summary.sumShares(valArr, key);
 	});
-
+  console.log('summary end',summary)
 	return summary;
 };
 
@@ -31,10 +32,6 @@ const DataContainer = ({ onScreen }: { onScreen: Feature<Polygon, Properties>[] 
 	const [data, setData] = useState<AnyObject>({}); // This could be better typed with an interface that has race and education?
 	// const [closeChart, setCloseChart] = useState(false);
 
-	// const handleClick = () => { //FIXME: This seems to be unnecessary
-	//   closeChart ? setCloseChart(true) : setCloseChart(false);
-	//   console.log(closeChart)
-	// };
 
 	useEffect(() => {
 		console.log('fetching data');
@@ -49,7 +46,9 @@ const DataContainer = ({ onScreen }: { onScreen: Feature<Polygon, Properties>[] 
 			});
 			delete raceSummary.shares['Total'];
 			setData((prevData) => ({ ...prevData, race: raceSummary.data }));
-			setSummary((prevData) => ({ ...summary, race: raceSummary.shares }));
+			setSummary(() => ({
+        ...summary,
+        race: raceSummary.shares }));
 		});
 
 		fetchCensusData(edRequest).then((result) => {
@@ -83,16 +82,17 @@ const DataContainer = ({ onScreen }: { onScreen: Feature<Polygon, Properties>[] 
 			}
 			const onScreenRace = Object.assign({},
 				...onScreenGeoIDs.map((key) => ({
-					[key]: data.race[key],
+					[key]: (data.race) ? data.race[key] : {},
 				}))
 			);
 
 			const onScreenEd = Object.assign({},
 				...onScreenGeoIDs.map((key) => ({
-          [key]: data.education[key],
+          [key]: (data.education) ? data.education[key] : {},
 				}))
 			);
-
+      console.log('🛹', onScreenRace, onScreenEd)
+      console.log(data)
 			const raceSummary = createSummaryData(
 				onScreenRace,
 				raceVars,

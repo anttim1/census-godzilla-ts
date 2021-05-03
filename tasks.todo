@@ -1,0 +1,6 @@
+
+☐ Figure out why Swiper line 53 is given all 0's for data
+
+✔ Let map load on app start in a way that dosen't break the map @done (5/3/2021, 10:18:33 AM)
+
+☐ Unrender the data container if it displays nothing
