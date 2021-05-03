@@ -1,4 +1,3 @@
-//backend bug calculating share in age data
 import '../css/dataContainer.css';
 import '../css/styles.css';
 
@@ -19,22 +18,18 @@ reCalc?: boolean
 	const summary = new CensusSummary(data, varMap);
 	if (!reCalc) summary.mapDataToDescriptor();
 	summary.getTotals();
-  console.log('summary initial',summary)
 	Object.entries(sumVars).forEach(([key, valArr]) => {
 		summary.sumShares(valArr, key);
 	});
-  console.log('summary end',summary)
 	return summary;
 };
 
 const DataContainer = ({ onScreen }: { onScreen: Feature<Polygon, Properties>[] | undefined}) => {
 	const [summary, setSummary] = useState({ race: {}, education: {} });
-	const [data, setData] = useState<AnyObject>({}); // This could be better typed with an interface that has race and education?
-	// const [closeChart, setCloseChart] = useState(false);
+	const [data, setData] = useState<AnyObject>({});
 
 
 	useEffect(() => {
-		console.log('fetching data');
 		const raceTables = Object.keys(raceVars).map((item) => item.split('_')[1]);
 		const raceRequest = createChartRequest('B03002', raceTables);
 		const edTables = Object.keys(edVars).map((item) => item.split('_')[1]);
@@ -72,7 +67,6 @@ const DataContainer = ({ onScreen }: { onScreen: Feature<Polygon, Properties>[] 
 		});
 	}, []);
 
-	console.log('data', data);
 	useEffect(() => {
 		if (onScreen && Object.keys(data).length) {
 			const onScreenGeoIDs = [];
@@ -91,8 +85,6 @@ const DataContainer = ({ onScreen }: { onScreen: Feature<Polygon, Properties>[] 
           [key]: (data.education) ? data.education[key] : {},
 				}))
 			);
-      console.log('🛹', onScreenRace, onScreenEd)
-      console.log(data)
 			const raceSummary = createSummaryData(
 				onScreenRace,
 				raceVars,

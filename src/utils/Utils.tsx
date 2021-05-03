@@ -3,7 +3,6 @@ export const attribution:string =
 
 export const tileUrl:string =
      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-    // 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png'
 
 
 interface defaultMapState{
@@ -18,13 +17,13 @@ export const defaultMapState:defaultMapState = {
   lng: -74.2598761,
   zoom: 6,
   minZoom: 2,
-  mapStyle: { width: "100%", position: "absolute", top: 0, bottom: 0, zIndex: 500, }
-}
+  mapStyle: { width: '100%', position: 'absolute', top: 0, bottom: 0, zIndex: 500, }
+};
 export const colorRange = [
-    "#ffd1dc",
-    "#ffad9f",
-    "#ff5533",
-    "#e2492d",
-    "#9a311f",
-    "#782618"
- ];
+  '#ffd1dc',
+  '#ffad9f',
+  '#ff5533',
+  '#e2492d',
+  '#9a311f',
+  '#782618'
+];

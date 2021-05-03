@@ -27,14 +27,12 @@ const ChartSwiper = (props: SummeryData) => {
 
   useEffect(() => {
     if (props.data) {
-      console.log('🌊',props.data);
       setRaceChart(drawChart(props.data.race, '#race-chart'));
       setEdChart(drawChart(props.data.education, '#education-chart'));
     }
   }, []);
 
   useEffect(() => {
-    console.log('updating');
     if (raceChart) {
       // Here we take steps to correct any errors in the data before we pass it to the chart
       const currentValue = Object.assign(
@@ -50,7 +48,6 @@ const ChartSwiper = (props: SummeryData) => {
       for (const key in currentValue) {
         if (!currentValue[key]) currentValue[key] = 0;
       }
-      console.log('🛹', currentValue);
       raceChart.update(currentValue);
     }
     if (edChart) {
@@ -58,7 +55,7 @@ const ChartSwiper = (props: SummeryData) => {
       const currentValue = Object.assign(
         {
           'Bachelor\'s': 0,
-          Graduate: 0,
+          'Graduate': 0,
           'High School': 0,
           'No Degree': 0,
           'Some College': 0,
@@ -68,25 +65,15 @@ const ChartSwiper = (props: SummeryData) => {
       for (const key in currentValue) {
         if (!currentValue[key]) currentValue[key] = 0;
       }
-      console.log('🛹', currentValue);
       edChart.update(currentValue);
     }
   }, [props.data]);
-
-  //  useEffect(() => {
-  //console.log(props.closeChart);
-  //props.closeChart
-  //? setRaceChart(null, "#race-chart")
-  //: setRaceChart(drawChart(props.data.race, "#race-chart"));
-  //  }, [props.closeChart]);
 
   if (props) {
     return (
       <React.Fragment>
         <Swiper
           id="main"
-          //thumbs={{ swiper: thumbsSwiper }}
-          //controller={{ control: controlledSwiper }}
           tag="section"
           wrapperTag="ul"
           navigation

@@ -4,7 +4,6 @@ import './css/typeahead.css';
 
 import React, { useEffect, useState } from 'react';
 import { Typeahead } from 'react-bootstrap-typeahead';
-//import Sidebar from "react-sidebar"; // Sidebar is unused in original fork
 import Form from 'react-bootstrap/Form';
 
 import DemoMap from './components/DemoMap';
@@ -33,15 +32,7 @@ const App = () => {
 	const [isLoaded, setIsLoaded] = useState(false);
 	const [datasets, setDatasets] = useState<DatasetParameters[]>([]);
 
-	// NOTE: This is commented out from the original fork
-	//  constructor(props) {
-	//super(props);
-	//this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
-	//}
 
-	//onSetSidebarOpen(open) {
-	//this.setState({ sidebarOpen: open });
-	//  }
 	type CensusLabel = { [key: string]: string[] };
 
 	interface TableCategories {
@@ -54,11 +45,9 @@ const App = () => {
 			.then((res) => res.json())
 			.then((result: TableCategories) => {
 				setTables(
-					// This will probably cause a crash
 					result.Groups.flatMap((data: { [key: string]: string }) =>
 						Object.entries(data).map(([key, value]) => ({ [key]: [value] }))
 					)
-					//Object.entries(result.Groups).map( ([key, value]) => ({[key]: [value]}))
 				);
 			})
 			.catch((error) => {
@@ -66,31 +55,15 @@ const App = () => {
 			});
 	};
 
-	// interface raceCounts {
-	// 	Asian: number;
-	// 	Black: number;
-	// 	Hispanic: number;
-	// 	Multi: number;
-	// 	Native: number;
-	// 	Other: number;
-	// 	Pacific: number;
-	// 	White: number;
-	// 	Total: number;
-	// }
-	// interface variableCategories {
-	// 	race: any; // Should be an object of raceCounts types
-	// 	education: any; // Should be an object of educationCounts types
-	// }
-	// e is an array with one index, whose key is code for the census query and value is the query in english
+
 	const getVariables = (e: CensusLabel[]): void => {
 		if (e[0] !== undefined) {
 			fetch(variablesCall.replace('$group', Object.keys(e[0])[0]).replace('$key', censusKey))
 				.then((res) => res.json())
 				.then((result: { variableInfo: { [key: string]: InitialQueryType } }) => {
-					setVariables( //NOTE the type here should be an Object of CensusLables
+					setVariables(
 						Object.entries(result.variableInfo).map(([key, value]) => ({ [key]: Object.values(value) }))
 					);
-					//setVariables(result.variableInfo);
 				})
 				.catch((error) => {
 					console.log(error);
@@ -105,7 +78,6 @@ const App = () => {
     const selectedQuery = Object.keys(e[0])[0];
     setSelectedVar( selectedQuery );
 
-		// else setSelectedVar('');
 	};
 
 	interface UnprocessedCensusYearsData {
@@ -160,12 +132,11 @@ const App = () => {
 							<Typeahead
 								id="variable"
 								size="small"
-								onChange={setVariable} // Consider using a selected method here instead
+								onChange={setVariable}
 								filterBy={(option, props) => {
-									return !!option[Object.keys(option)[0]][0].match(/^Estimate!!/i); // '!!' converts null to false
+									return !!option[Object.keys(option)[0]][0].match(/^Estimate!!/i);
 								}}
 								labelKey={(option) => {
-									// this runs 8 times???
 									return option[Object.keys(option)[0]][0]
 										.replace(/Estimate!!Total!!/g, '')
 										.replace(/!!/g, '|');
