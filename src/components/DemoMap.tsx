@@ -33,6 +33,7 @@ const DemoMap = ({ selectedVar }: { selectedVar: string | null }) => {
   const [colorScale, setColorScale] = useState<ScaleQuantile<string, never>>();
   const [quantiles, setQuantiles] = useState<number[]>();
   const [onScreen, setOnScreen] = useState<Feature<Polygon, Properties>[]>();
+  const [showDataContainer, setShowDataContainer] = useState<Boolean>(true);
 
   const mapRef: MapReference = createRef();
   const layerRef = createRef<GeoJSON>();
@@ -92,11 +93,12 @@ const DemoMap = ({ selectedVar }: { selectedVar: string | null }) => {
 
   useEffect(() => {
     if (onScreen) {
+      setShowDataContainer(true);
       updateColors();
     }
   }, [onScreen]);
 
-  if (!isLoaded && onScreen) {
+  if (!isLoaded) {
     return <div>Loading...</div>;
   } else if (colorScale) {
     return (
@@ -137,7 +139,11 @@ const DemoMap = ({ selectedVar }: { selectedVar: string | null }) => {
             };
           }}
         />
-        <DataContainer onScreen={onScreen} />
+        <DataContainer
+          onScreen={onScreen}
+          setShowDataContainer={setShowDataContainer}
+          showDataContainer = {showDataContainer}
+        />
         {<Legend quantiles={quantiles} colorRange={colorRange} />}
       </Map>
     );

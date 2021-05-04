@@ -24,7 +24,7 @@ const createSummaryData = (
   return summary;
 };
 
-const DataContainer = ({ onScreen }: { onScreen: Feature<Polygon, Properties>[] | undefined}) => {
+const DataContainer = ({ onScreen, setShowDataContainer, showDataContainer }: { onScreen: Feature<Polygon, Properties>[] | undefined, setShowDataContainer:React.Dispatch<React.SetStateAction<Boolean>>, showDataContainer:Boolean}) => {
   const [summary, setSummary] = useState({ race: {}, education: {} });
   const [data, setData] = useState<AnyObject>({});
 
@@ -118,8 +118,8 @@ edSummary.shares['Bachelor\'s'];
   }, [onScreen]);
 
   return summary.race && summary.education && onScreen ? (
-    <div id="dataContainer" className="dataContainer">
-      <ChartSwiper data = {summary} />
+    <div id="dataContainer" className={showDataContainer ? "dataContainer" : "hidden"}>
+      <ChartSwiper data = {summary} setShowDataContainer={setShowDataContainer}/>
     </div>
   ) : (
     <h3>Data is loading</h3>

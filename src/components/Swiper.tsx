@@ -6,6 +6,7 @@ import SwiperCore, { Navigation } from 'swiper';
 import { Swiper } from 'swiper/react';
 
 import { drawChart } from '../helpers/Helpers';
+import ReactDOM from 'react-dom';
 
 //import "swiper/components/navigation/navigation.scss"; // Import Swiper styles
 //import 'swiper/swiper.scss';
@@ -18,6 +19,7 @@ interface SummeryData {
 		race: AnyObject;
 		education: AnyObject;
 	};
+  setShowDataContainer: React.Dispatch<React.SetStateAction<Boolean>>
 }
 
 SwiperCore.use([Navigation]);
@@ -45,10 +47,17 @@ const ChartSwiper = (props: SummeryData) => {
         },
         props.data.race
       );
+      let totalCount = 0;
       for (const key in currentValue) {
-        if (!currentValue[key]) currentValue[key] = 0;
+        if (!currentValue[key]) currentValue[key] = 0; // Correct any null or undefined values
+        totalCount += currentValue[key];
       }
       raceChart.update(currentValue);
+      // If total count is zero, we're not graphing anything, so unmount the DataContainer
+      if (totalCount === 0) {
+       console.log('Unmount!')
+       props.setShowDataContainer(false);
+      }
     }
     if (edChart) {
       // Here we take steps to correct any errors in the data before we pass it to the chart
