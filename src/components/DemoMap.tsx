@@ -96,7 +96,7 @@ const DemoMap = ({ selectedVar }: { selectedVar: string | null }) => {
     }
   }, [onScreen]);
 
-  if (!isLoaded) {
+  if (!isLoaded && onScreen) {
     return <div>Loading...</div>;
   } else if (colorScale) {
     return (
