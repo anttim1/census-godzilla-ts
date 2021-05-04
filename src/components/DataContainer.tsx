@@ -27,6 +27,7 @@ const createSummaryData = (
 const DataContainer = ({ onScreen, setShowDataContainer, showDataContainer }: { onScreen: Feature<Polygon, Properties>[] | undefined, setShowDataContainer:React.Dispatch<React.SetStateAction<Boolean>>, showDataContainer:Boolean}) => {
   const [summary, setSummary] = useState({ race: {}, education: {} });
   const [data, setData] = useState<AnyObject>({});
+  const [finishedLoad, setFinishedLoad] = useState<Boolean>(false);
 
 
   useEffect(() => {
@@ -44,6 +45,7 @@ const DataContainer = ({ onScreen, setShowDataContainer, showDataContainer }: { 
       setSummary(() => ({
         ...summary,
         race: raceSummary.shares }));
+      setFinishedLoad(true);
     });
 
     fetchCensusData(edRequest).then((result) => {
@@ -117,7 +119,7 @@ edSummary.shares['Bachelor\'s'];
     }
   }, [onScreen]);
 
-  return summary.race && summary.education && onScreen ? (
+  return summary.race && summary.education && onScreen && finishedLoad ? (
     <div id="dataContainer" className={showDataContainer ? "dataContainer" : "hidden"}>
       <ChartSwiper data = {summary} setShowDataContainer={setShowDataContainer}/>
     </div>

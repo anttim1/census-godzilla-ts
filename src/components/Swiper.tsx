@@ -54,11 +54,9 @@ const ChartSwiper = (props: SummeryData) => {
       }
       raceChart.update(currentValue);
       // If total count is zero, we're not graphing anything, so unmount the DataContainer
-      if (totalCount === 0) {
-       console.log('Unmount!')
-       props.setShowDataContainer(false);
-      }
+      if (totalCount === 0) props.setShowDataContainer(false);
     }
+
     if (edChart) {
       // Here we take steps to correct any errors in the data before we pass it to the chart
       const currentValue = Object.assign(
@@ -89,7 +87,6 @@ const ChartSwiper = (props: SummeryData) => {
           pagination
           spaceBetween={0}
           slidesPerView={1}
-          onInit={(swiper) => console.log('Swiper initialized!', swiper)}
           onSlideChange={(swiper) => {
             console.log('Slide index changed to: ', swiper.activeIndex);
           }}
