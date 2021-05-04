@@ -92,5 +92,4 @@ const ChartSwiper = ({ data, setShowDataContainer }: SummeryData) => {
 		</React.Fragment>
 	);
 };
-
 export default ChartSwiper;

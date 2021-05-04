@@ -3,8 +3,10 @@
 
 ✔ Let map load on app start in a way that dosen't break the map @done (5/3/2021, 10:18:33 AM)
 
-☐ Unrender the data container if it displayas nothing
+✔ Unrender the data container if it displayas nothing @done (5/4/2021, 3:00:56 PM)
 
 ✔ Add eslint @done (5/4/2021, 7:29:18 AM)
 
-☐ Add integration tests
+☐ Add integration/unit tests
+
+☐ Add snapshot tests

@@ -64,6 +64,7 @@
     "@types/enzyme": "^3.10.8",
     "@types/enzyme-adapter-react-16": "^1.0.6",
     "@types/jest": "^26.0.23",
+    "@types/node-fetch": "^2.5.10",
     "@types/react-bootstrap-typeahead": "^5.1.4",
     "@types/react-leaflet": "^2.8.1",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
@@ -78,6 +79,7 @@
     "eslint-plugin-react-hooks": "^1.7.0",
     "jest": "^24.9.0",
     "jest-enzyme": "^7.1.2",
+    "node-fetch": "^2.6.1",
     "react-test-renderer": "^17.0.2",
     "ts-jest": "^26.5.5"
   }
