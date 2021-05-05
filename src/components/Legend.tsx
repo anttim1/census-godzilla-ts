@@ -39,7 +39,7 @@ class Legend extends MapControl<Props> {
 
     const { map } = this.props.leaflet;
     this.legend.onAdd = this.createLegend;
-    this.legend.addTo(map);
+    if (map) this.legend.addTo(map);
   }
 
   // this should only update the div
@@ -47,7 +47,7 @@ class Legend extends MapControl<Props> {
     const { map } = this.props.leaflet;
     map.removeControl(this.legend);
     this.legend.onAdd = this.createLegend;
-    this.legend.addTo(map);
+    if (map) this.legend.addTo(map);
   }
 }
 

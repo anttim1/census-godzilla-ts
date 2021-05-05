@@ -64,6 +64,7 @@ export const createRequest = (group: string, variable: string) => {
 		group +
 		'&state=36&county=*&geography=county&key=32dd72aa5e814e89c669a4664fd31dcfc3df333d&variable=' +
 		variable;
+    
   return request;
 };
 
