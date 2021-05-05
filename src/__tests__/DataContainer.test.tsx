@@ -20,5 +20,6 @@ describe('passing props', () => {
   />);
   it('Accepts map information props', () => {
     expect(wrapper.props().onScreen).toEqual(onScreen);
+    expect(wrapper.props().setShowDataContainer).toEqual(setShowDataContainer);
   });
 });
