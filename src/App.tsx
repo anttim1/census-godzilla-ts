@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import Form from 'react-bootstrap/Form';
 
-import DemoMap from './components/DemoMap';
+import Map from './components/Map';
 
 const censusKey = '32dd72aa5e814e89c669a4664fd31dcfc3df333d';
 
@@ -146,7 +146,7 @@ if (!isLoaded) {
           }
         </Form.Group>
       </div>
-      <DemoMap selectedVar={selectedVar} />
+      <Map selectedVar={selectedVar} />
     </>
   );
 }
