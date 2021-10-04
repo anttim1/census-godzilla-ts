@@ -4,32 +4,59 @@ import 'leaflet/dist/leaflet.css';
 import React, { createRef, useEffect, useState } from 'react';
 import { GeoJSON, Map, TileLayer, ZoomControl } from 'react-leaflet';
 import US_counties from '../data/US_counties_5m.json';
-import { addData, coordsToJSON, createRequest, fetchCensusData, getIntersect } from '../helpers/Helpers';
-import { attribution, colorRange, defaultMapState, tileUrl } from '../utils/Utils';
+import {
+  addData,
+  coordsToJSON,
+  createRequest,
+  fetchCensusData,
+  getIntersect,
+} from '../helpers/Helpers';
+import {
+  attribution,
+  colorRange,
+  defaultMapState,
+  tileUrl,
+} from '../utils/Utils';
 import DataContainer from './DataContainer';
 import Legend from './Legend';
 
 interface MapReference {
-	current: any;
+  current: any;
 }
 
 interface QueryType {
-	[key: string]: {
-		name: string;
-		type: string;
-	};
+  [key: string]: {
+    name: string;
+    type: string;
+  };
 }
 
-const TitleBlock = ({ title }: { title: string }) => <div className="info title">{title}</div>;
+const TitleBlock = ({ title }: { title: string }) => (
+  <div className="info title">{title}</div>
+);
 
-const DemoMap = ({ selectedVar }: { selectedVar: string | null }) => {
+const CensusMap = ({
+  selectedVar,
+  vintage,
+  states,
+}: {
+  selectedVar: string | null;
+  vintage: string;
+  states: string;
+}) => {
   if (selectedVar === '') selectedVar = null;
 
   const [isLoaded, setIsLoaded] = useState<boolean>();
   const [items, setItems] = useState<Feature<Polygon, Properties>[]>([]);
-  const [variables, setVariables] = useState<QueryType>({ noData: { name: '', type: 'int' } });
+  const [variables, setVariables] = useState<QueryType>({
+    noData: { name: '', type: 'int' },
+  });
   const [mapVariable, setMapVariable] = useState<string>('');
-  const [groupInfo, setGroupInfo] = useState({ vintage: 0, description: '', code: '' });
+  const [groupInfo, setGroupInfo] = useState({
+    vintage: 0,
+    description: '',
+    code: '',
+  });
   const [colorScale, setColorScale] = useState<ScaleQuantile<string, never>>();
   const [quantiles, setQuantiles] = useState<number[]>();
   const [onScreen, setOnScreen] = useState<Feature<Polygon, Properties>[]>();
@@ -72,7 +99,7 @@ const DemoMap = ({ selectedVar }: { selectedVar: string | null }) => {
       const groupVal = group ? group : '';
       const variable = val ? val : '';
       setMapVariable(variable);
-      const request = createRequest(groupVal, variable);
+      const request = createRequest(states, vintage, groupVal, variable);
 
       fetchCensusData(request).then((result) => {
         const items = addData(US_counties, result.geoIdValue);
@@ -117,10 +144,10 @@ const DemoMap = ({ selectedVar }: { selectedVar: string | null }) => {
         <TitleBlock
           title={
             groupInfo.vintage +
-						' ' +
-						groupInfo.description +
-						' | ' +
-						variables[Object.keys(variables)[0]].name.replaceAll('!!', ' ')
+            ' ' +
+            groupInfo.description +
+            ' | ' +
+            variables[Object.keys(variables)[0]].name.replaceAll('!!', ' ')
           }
         />
         <TileLayer attribution={attribution} url={tileUrl} />
@@ -130,7 +157,9 @@ const DemoMap = ({ selectedVar }: { selectedVar: string | null }) => {
           data={items}
           style={(item) => {
             return {
-              fillColor: colorScale(item ? item.properties.dataValue[mapVariable] : '#EEE'),
+              fillColor: colorScale(
+                item ? item.properties.dataValue[mapVariable] : '#EEE'
+              ),
               fillOpacity: 0.5,
               weight: 0.5,
               opacity: 0.7,
@@ -142,7 +171,9 @@ const DemoMap = ({ selectedVar }: { selectedVar: string | null }) => {
         <DataContainer
           onScreen={onScreen}
           setShowDataContainer={setShowDataContainer}
-          showDataContainer = {showDataContainer}
+          showDataContainer={showDataContainer}
+          states={states}
+          vintage={vintage}
         />
         {<Legend quantiles={quantiles} colorRange={colorRange} />}
       </Map>
@@ -171,4 +202,4 @@ const DemoMap = ({ selectedVar }: { selectedVar: string | null }) => {
   }
 };
 
-export default DemoMap;
+export default CensusMap;

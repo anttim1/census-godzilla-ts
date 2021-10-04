@@ -1,0 +1,257 @@
+[
+  {
+    "stname": "Alabama",
+    "st": "01",
+    "stusps": "AL"
+  },
+  {
+    "stname": "Alaska",
+    "st": "02",
+    "stusps": "AK"
+  },
+  {
+    "stname": "Arizona",
+    "st": "04",
+    "stusps": "AZ"
+  },
+  {
+    "stname": "Arkansas",
+    "st": "05",
+    "stusps": "AR"
+  },
+  {
+    "stname": "California",
+    "st": "06",
+    "stusps": "CA"
+  },
+  {
+    "stname": "Colorado",
+    "st": "08",
+    "stusps": "CO"
+  },
+  {
+    "stname": "Connecticut",
+    "st": "09",
+    "stusps": "CT"
+  },
+  {
+    "stname": "Delaware",
+    "st": 10,
+    "stusps": "DE"
+  },
+  {
+    "stname": "District of Columbia",
+    "st": 11,
+    "stusps": "DC"
+  },
+  {
+    "stname": "Florida",
+    "st": 12,
+    "stusps": "FL"
+  },
+  {
+    "stname": "Georgia",
+    "st": 13,
+    "stusps": "GA"
+  },
+  {
+    "stname": "Hawaii",
+    "st": 15,
+    "stusps": "HI"
+  },
+  {
+    "stname": "Idaho",
+    "st": 16,
+    "stusps": "ID"
+  },
+  {
+    "stname": "Illinois",
+    "st": 17,
+    "stusps": "IL"
+  },
+  {
+    "stname": "Indiana",
+    "st": 18,
+    "stusps": "IN"
+  },
+  {
+    "stname": "Iowa",
+    "st": 19,
+    "stusps": "IA"
+  },
+  {
+    "stname": "Kansas",
+    "st": 20,
+    "stusps": "KS"
+  },
+  {
+    "stname": "Kentucky",
+    "st": 21,
+    "stusps": "KY"
+  },
+  {
+    "stname": "Louisiana",
+    "st": 22,
+    "stusps": "LA"
+  },
+  {
+    "stname": "Maine",
+    "st": 23,
+    "stusps": "ME"
+  },
+  {
+    "stname": "Maryland",
+    "st": 24,
+    "stusps": "MD"
+  },
+  {
+    "stname": "Massachusetts",
+    "st": 25,
+    "stusps": "MA"
+  },
+  {
+    "stname": "Michigan",
+    "st": 26,
+    "stusps": "MI"
+  },
+  {
+    "stname": "Minnesota",
+    "st": 27,
+    "stusps": "MN"
+  },
+  {
+    "stname": "Mississippi",
+    "st": 28,
+    "stusps": "MS"
+  },
+  {
+    "stname": "Missouri",
+    "st": 29,
+    "stusps": "MO"
+  },
+  {
+    "stname": "Montana",
+    "st": 30,
+    "stusps": "MT"
+  },
+  {
+    "stname": "Nebraska",
+    "st": 31,
+    "stusps": "NE"
+  },
+  {
+    "stname": "Nevada",
+    "st": 32,
+    "stusps": "NV"
+  },
+  {
+    "stname": "New Hampshire",
+    "st": 33,
+    "stusps": "NH"
+  },
+  {
+    "stname": "New Jersey",
+    "st": 34,
+    "stusps": "NJ"
+  },
+  {
+    "stname": "New Mexico",
+    "st": 35,
+    "stusps": "NM"
+  },
+  {
+    "stname": "New York",
+    "st": 36,
+    "stusps": "NY"
+  },
+  {
+    "stname": "North Carolina",
+    "st": 37,
+    "stusps": "NC"
+  },
+  {
+    "stname": "North Dakota",
+    "st": 38,
+    "stusps": "ND"
+  },
+  {
+    "stname": "Ohio",
+    "st": 39,
+    "stusps": "OH"
+  },
+  {
+    "stname": "Oklahoma",
+    "st": 40,
+    "stusps": "OK"
+  },
+  {
+    "stname": "Oregon",
+    "st": 41,
+    "stusps": "OR"
+  },
+  {
+    "stname": "Pennsylvania",
+    "st": 42,
+    "stusps": "PA"
+  },
+  {
+    "stname": "Rhode Island",
+    "st": 44,
+    "stusps": "RI"
+  },
+  {
+    "stname": "South Carolina",
+    "st": 45,
+    "stusps": "SC"
+  },
+  {
+    "stname": "South Dakota",
+    "st": 46,
+    "stusps": "SD"
+  },
+  {
+    "stname": "Tennessee",
+    "st": 47,
+    "stusps": "TN"
+  },
+  {
+    "stname": "Texas",
+    "st": 48,
+    "stusps": "TX"
+  },
+  {
+    "stname": "Utah",
+    "st": 49,
+    "stusps": "UT"
+  },
+  {
+    "stname": "Vermont",
+    "st": 50,
+    "stusps": "VT"
+  },
+  {
+    "stname": "Virginia",
+    "st": 51,
+    "stusps": "VA"
+  },
+  {
+    "stname": "Washington",
+    "st": 53,
+    "stusps": "WA"
+  },
+  {
+    "stname": "West Virginia",
+    "st": 54,
+    "stusps": "WV"
+  },
+  {
+    "stname": "Wisconsin",
+    "st": 55,
+    "stusps": "WI"
+  },
+  {
+    "stname": "Wyoming",
+    "st": 56,
+    "stusps": "WY"
+  }
+]

@@ -3,9 +3,8 @@ import * as d3 from 'd3';
 
 type AnyObject = { [key: string]: any };
 
-
-
-export const fetchCensusData = (request: string) => fetch(request).then((res) => res.json());
+export const fetchCensusData = (request: string) =>
+  fetch(request).then((res) => res.json());
 
 export const addData = (geo: AnyObject, data: AnyObject) => {
   const newFeatures = [];
@@ -26,7 +25,10 @@ export const addData = (geo: AnyObject, data: AnyObject) => {
   return newFeatures;
 };
 
-export const getIntersect = (bounds: Feature<Polygon, Properties>, geo: Feature<Polygon, Properties>[]) => {
+export const getIntersect = (
+  bounds: Feature<Polygon, Properties>,
+  geo: Feature<Polygon, Properties>[]
+) => {
   const intrsctPolys = [];
   if (!geo) return [];
   for (const i in geo) {
@@ -56,26 +58,44 @@ export const coordsToJSON = (coords: number[][]) => {
   return poly;
 };
 
-export const createRequest = (group: string, variable: string) => {
+export const createRequest = (
+  state: string,
+  vintage: string,
+  group: string,
+  variable: string
+) => {
   const url = 'https://better-census-api.com/';
   const request =
-		url +
-		'gettable?vintage=2018&dataset=acs5&group=' +
-		group +
-		'&state=36&county=*&geography=county&key=32dd72aa5e814e89c669a4664fd31dcfc3df333d&variable=' +
-		variable;
-    
+    url +
+    'gettable?vintage=' +
+    vintage +
+    '&dataset=acs5&group=' +
+    group +
+    '&state=' +
+    state +
+    '&county=*&geography=county&key=32dd72aa5e814e89c669a4664fd31dcfc3df333d&variable=' +
+    variable;
+
   return request;
 };
 
-export const createChartRequest = (group: string, variable: string[]) => {
+export const createChartRequest = (
+  state: string,
+  vintage: string,
+  group: string,
+  variable: string[]
+) => {
   const url = 'https://better-census-api.com/';
   const request =
-		url +
-		'gettable?vintage=2018&dataset=acs1&group=' +
-		group +
-		'&state=36&county=*&geography=county&key=32dd72aa5e814e89c669a4664fd31dcfc3df333d&variable=' +
-		variable;
+    url +
+    'gettable?vintage=' +
+    vintage +
+    '&dataset=acs1&group=' +
+    group +
+    '&state=' +
+    state +
+    '&county=*&geography=county&key=32dd72aa5e814e89c669a4664fd31dcfc3df333d&variable=' +
+    variable;
   return request;
 };
 
@@ -108,8 +128,12 @@ export const drawChart = (data: AnyObject, target: string) => {
   x.domain([0, xMax]);
   y.domain(keys);
 
-
-  let bar: d3.Selection<d3.BaseType | SVGRectElement, string, SVGGElement, unknown> = svg
+  let bar: d3.Selection<
+    d3.BaseType | SVGRectElement,
+    string,
+    SVGGElement,
+    unknown
+  > = svg
     .append('g')
     .attr('fill', 'steelblue')
     .selectAll('rect')
@@ -121,14 +145,15 @@ export const drawChart = (data: AnyObject, target: string) => {
     .attr('width', (d) => x(data[d]) - x(0))
     .attr('height', y.bandwidth() - 1);
 
-
   svg.append('g').call(d3.axisLeft(y));
 
   const xAxis = (g: any, x: d3.AxisScale<d3.AxisDomain>) =>
     g
       .attr('transform', 'translate(0,' + height + ')')
       .call(d3.axisBottom(x).ticks(8, 'f', '%'))
-      .call((g: any) => (g.selection ? g.selection() : g).select('.domain').remove());
+      .call((g: any) =>
+        (g.selection ? g.selection() : g).select('.domain').remove()
+      );
 
   const gx = svg.append('g').call(xAxis, x);
 
@@ -152,4 +177,3 @@ export const drawChart = (data: AnyObject, target: string) => {
     },
   });
 };
-
