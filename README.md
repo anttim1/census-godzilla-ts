@@ -1,4 +1,4 @@
-[Try it out](https://app.better-census-api.com) (you can ignore certificate warning about subdomain -- working on it).
+[Try it out](https://app.better-census-api.com). Please ignore certificate warning about subdomain -- working on it (on browser: Advanced -> Proceed to...).
 
 # Census Godzilla
 
