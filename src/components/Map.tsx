@@ -39,10 +39,12 @@ const CensusMap = ({
   selectedVar,
   vintage,
   states,
+  valType,
 }: {
   selectedVar: string | null;
   vintage: string;
   states: string;
+  valType: string;
 }) => {
   if (selectedVar === '') selectedVar = null;
 
@@ -92,37 +94,37 @@ const CensusMap = ({
     setIsLoaded(true);
   }, []);
 
-  useEffect(() => {
-    const getMapData = () => {
-      const group = selectedVar?.split('_')[0];
-      const val = selectedVar?.split('_')[1];
-      const groupVal = group ? group : '';
-      const variable = val ? val : '';
-      setMapVariable(variable);
-      const request = createRequest(states, vintage, groupVal, variable);
+  const getMapData = () => {
+    const group = selectedVar?.split('_')[0];
+    const val = selectedVar?.split('_')[1];
+    const groupVal = group ? group : '';
+    const variable = val ? val : '';
+    setMapVariable(variable);
+    const request = createRequest(states, vintage, groupVal, variable);
 
-      fetchCensusData(request).then((result) => {
-        const items = addData(US_counties, result.geoIdValue);
-        const coloScale = scaleQuantile<string>()
-          .domain(items.map((d) => d.properties.dataValue[variable]))
-          .range(colorRange);
-        //setQuantiles(coloScale.quantiles());
-        setVariables(result.variableInfo);
-        setGroupInfo(result.groupInfo);
-        setItems(items);
-        setColorScale(() => coloScale);
-      });
-    };
+    fetchCensusData(request).then((result) => {
+      console.log('fetchtype', valType);
+      const items = addData(US_counties, result[valType]);
+      const coloScale = scaleQuantile<string>()
+        .domain(items.map((d) => d.properties.dataValue[variable]))
+        .range(colorRange);
+      //setQuantiles(coloScale.quantiles());
+      setVariables(result.variableInfo);
+      setGroupInfo(result.groupInfo);
+      setItems(items);
+      setColorScale(() => coloScale);
+    });
+  };
+
+  useEffect(() => {
     if (selectedVar) {
       getMapData();
     }
   }, [selectedVar]);
 
   useEffect(() => {
-    if (onScreen) {
-      setShowDataContainer(true);
-      updateColors();
-    }
+    setShowDataContainer(true);
+    updateColors();
   }, [onScreen]);
 
   if (!isLoaded) {

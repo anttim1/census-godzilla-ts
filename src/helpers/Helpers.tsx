@@ -1,5 +1,6 @@
 import { Feature, intersect, Polygon, Properties } from '@turf/turf';
 import * as d3 from 'd3';
+const API_URL = process.env.REACT_APP_API_URL;
 
 type AnyObject = { [key: string]: any };
 
@@ -64,10 +65,10 @@ export const createRequest = (
   group: string,
   variable: string
 ) => {
-  const url = 'https://better-census-api.com/';
+  const url = API_URL;
   const request =
     url +
-    'gettable?vintage=' +
+    '/gettable?vintage=' +
     vintage +
     '&dataset=acs5&group=' +
     group +
@@ -85,10 +86,10 @@ export const createChartRequest = (
   group: string,
   variable: string[]
 ) => {
-  const url = 'https://better-census-api.com/';
+  const url = API_URL;
   const request =
     url +
-    'gettable?vintage=' +
+    '/gettable?vintage=' +
     vintage +
     '&dataset=acs1&group=' +
     group +

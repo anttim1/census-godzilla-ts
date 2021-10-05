@@ -3,10 +3,10 @@ import { MapControl, withLeaflet } from 'react-leaflet';
 import L from 'leaflet';
 
 type Props = {
-  quantiles:number[] | undefined;
-  colorRange:string[];
+  quantiles: number[] | undefined;
+  colorRange: string[];
   leaflet: any;
-}
+};
 class Legend extends MapControl<Props> {
   //@ts-ignore
   createLeafletElement() {}
@@ -15,16 +15,16 @@ class Legend extends MapControl<Props> {
   legend = L.control({ position: 'bottomright' });
 
   createLegend = () => {
-
     const div = L.DomUtil.create('div', 'info legend');
-    const grades = (this.props.quantiles)? this.props.quantiles:[];
+    const grades = this.props.quantiles ? this.props.quantiles : [];
     const colors = this.props.colorRange;
     const labels = [];
     let from;
     let to;
 
-    for (let i = 0; i < grades?.length; i++) {
-      from = Math.floor(grades[i]);
+    for (let i = 0; i < grades.length; i++) {
+      if (typeof grades[i] == 'undefined') break;
+      from = grades[i] > 1 ? Math.floor(grades[i]) : grades[i].toFixed(2);
       to = grades[i + 1];
       labels.push(
         '<i style="background:' + colors[i] + '"></i> ' + from + (to ? '' : '+')
@@ -36,7 +36,6 @@ class Legend extends MapControl<Props> {
   };
 
   componentDidMount() {
-
     const { map } = this.props.leaflet;
     this.legend.onAdd = this.createLegend;
     if (map) this.legend.addTo(map);

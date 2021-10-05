@@ -95,7 +95,8 @@ const DataContainer = ({
   }, []);
 
   useEffect(() => {
-    if (onScreen && Object.keys(data).length) {
+    console.log('onsc', onScreen);
+    if (onScreen) {
       const onScreenGeoIDs = [];
       for (const item of onScreen) {
         const geoId = item.properties?.GEO_ID.split('US')[1];

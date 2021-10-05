@@ -11,13 +11,15 @@ import US_state_FIPS from './data/US_state_FIPS.json';
 
 const censusKey = '32dd72aa5e814e89c669a4664fd31dcfc3df333d';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const acsCall =
-  'https://better-census-api.com/finddataset?vintage=*&search=ACS,detailed%20tables';
-const tablesCall =
-  'https://better-census-api.com/findtable?search=*&datasetid=$id';
+  API_URL + '/finddataset?vintage=*&search=ACS,year%20detailed%20tables';
+const tablesCall = API_URL + '/findtable?search=*&datasetid=$id';
 
 const variablesCall =
-  'https://better-census-api.com/gettable?vintage=$vintage&dataset=acs5&state=10&county=*&group=$group&variable=*&geography=tract&key=$key';
+  API_URL +
+  '/gettable?vintage=$vintage&dataset=acs5&state=10&county=*&group=$group&variable=*&geography=tract&key=$key';
 
 const App = () => {
   interface DatasetParameters {
@@ -36,6 +38,7 @@ const App = () => {
   const [selectedVar, setSelectedVar] = useState<string>('');
   const [isLoaded, setIsLoaded] = useState(false);
   const [datasets, setDatasets] = useState<DatasetParameters[]>([]);
+  const [valType, setValType] = useState<string>('geoIdValue');
 
   type CensusLabel = { [key: string]: string[] };
 
@@ -74,11 +77,13 @@ const App = () => {
         .then((res) => res.json())
         .then(
           (result: { variableInfo: { [key: string]: InitialQueryType } }) => {
-            setVariables(
-              Object.entries(result.variableInfo).map(([key, value]) => ({
-                [key]: Object.values(value),
-              }))
-            );
+            // pick only estimates
+            const vars = Object.entries(result.variableInfo)
+              .filter(([k]) => k.endsWith('E'))
+              .map(([k, v]) => ({
+                [k]: Object.values(v),
+              }));
+            setVariables(vars);
           }
         )
         .catch((error) => {
@@ -149,13 +154,26 @@ const App = () => {
             </Form.Control>
             <br />
             <Form.Control
+              id="valueType"
+              size="sm"
+              as="select"
+              defaultValue={'geoIdValue'}
+              onChange={(e) => {
+                setValType(e.target.value);
+              }}
+            >
+              <option value="geoIdValue">Show total</option>
+              <option value="geoIdShare">Show share of total</option>
+            </Form.Control>
+            <br />
+            <Form.Control
               id="dataset"
               size="sm"
               as="select"
               onChange={getTables}
             >
               <option value="" disabled selected>
-                Select dataset
+                Select dataset...
               </option>
               {datasets.map((dataset, idx) => (
                 <option key={idx} value={dataset.id + ':' + dataset.vintage}>
@@ -182,11 +200,11 @@ const App = () => {
                 id="variable"
                 size="small"
                 onChange={setVariable}
-                filterBy={(option) => {
-                  return !!option[Object.keys(option)[0]][0].match(
-                    /^Estimate!!/i
-                  );
-                }}
+                //                filterBy={(option) => {
+                //return !!option[Object.keys(option)[0]][0].match(
+                ///^Estimate!!/i
+                //);
+                //                }}
                 labelKey={(option) => {
                   return option[Object.keys(option)[0]][0]
                     .replace(/Estimate!!Total!!/g, '')
@@ -198,7 +216,12 @@ const App = () => {
             }
           </Form.Group>
         </div>
-        <Map selectedVar={selectedVar} vintage={vintage} states={states} />
+        <Map
+          selectedVar={selectedVar}
+          vintage={vintage}
+          states={states}
+          valType={valType}
+        />
       </>
     );
   }
